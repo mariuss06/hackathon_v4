@@ -390,7 +390,7 @@ export const en: Dict = {
     demoSave: "Demo mode: the assessment is saved only to the browser history.",
     apiDown: "API unavailable.",
     exportUpsell: "Exporting the “Bank-Ready” report (Print/PDF) is included in the Pro plan, together with the full 30–90 day plan.",
-    pdfUpsell: "The “Bank Pre-Qualification Sheet” (PDF, 1 A4 page) is included in the Pro plan and in Pay-Per-Use (49 RON / analysis).",
+    pdfUpsell: "The “Bank Pre-Qualification Sheet” (PDF, 1 A4 page) is included in the Pro plan and in Pay-Per-Use (89 RON / analysis).",
   },
   portfolio: {
     title: "Consolidated dashboard — company portfolio",

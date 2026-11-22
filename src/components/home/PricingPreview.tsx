@@ -66,7 +66,7 @@ export function PricingPreview() {
                 <span className="rounded-full bg-emerald-soft px-2.5 py-0.5 text-xs font-semibold text-emerald-strong">Recomandat IMM</span>
               </div>
               <div className="mt-4 flex items-baseline gap-1">
-                <span className="text-3xl font-bold text-ink">149 RON</span>
+                <span className="text-3xl font-bold text-ink">119 RON</span>
                 <span className="text-xs text-muted">/ lună · fără perioadă minimă</span>
               </div>
               <p className="mt-2 text-xs text-muted sm:text-sm">

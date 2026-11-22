@@ -409,7 +409,7 @@ export async function setSubscription(sb: SupabaseClient, company: Company, plan
   return { companyId: company.id, planTier, billingCycle, status: "active", updatedAt };
 }
 
-// ---- Pay-per-use (one complete analysis, 49 RON) -------------------------------------
+// ---- Pay-per-use (one complete analysis, 89 RON) -------------------------------------
 
 /** Marks the company as unlocked and counts the purchased credit (mirrored on subscriptions). */
 export async function unlockPayPerUse(sb: SupabaseClient, company: Company) {

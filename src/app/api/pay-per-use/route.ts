@@ -4,7 +4,7 @@ import { PAY_PER_USE, payPerUseBreakdown } from "@/lib/pricing";
 import { ensureCompany, getSupabase, unlockPayPerUse } from "@/lib/supabase/server";
 
 /**
- * POST /api/pay-per-use — simulated checkout of one complete analysis (49 RON + TVA) for ONE company:
+ * POST /api/pay-per-use — simulated checkout of one complete analysis (89 RON + TVA) for ONE company:
  * sets companies.pay_per_use_unlocked = true and counts purchased_credits. No card is charged (demo).
  */
 export async function POST(request: NextRequest) {

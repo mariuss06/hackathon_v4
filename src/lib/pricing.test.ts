@@ -8,28 +8,30 @@ import {
   gateBanks,
   PLANS,
   priceBreakdown,
+  quarterlySavings,
   requiredPlanFor,
   riskAlerts,
   splitUploadsByLimit,
   yearlySavings,
 } from "./pricing.ts";
 
-test("prices: monthly / yearly and the 20% yearly saving", () => {
-  assert.equal(PLANS.pro.price.monthly, 149);
-  assert.equal(PLANS.pro.price.yearly, 119);
-  assert.equal(PLANS.business.price.yearly, 359);
-  assert.equal(yearlySavings("pro"), 360);
-  assert.equal(yearlySavings("business"), 1080);
-  assert.equal(yearlySavings("starter"), 0);
+test("prices: monthly / quarterly and the ~12% 3-month package saving", () => {
+  assert.equal(PLANS.pro.price.monthly, 119);
+  assert.equal(PLANS.pro.price.quarterly, 105);
+  assert.equal(PLANS.business.price.monthly, 449);
+  assert.equal(PLANS.business.price.quarterly, 395);
+  assert.equal(quarterlySavings("pro"), 42);
+  assert.equal(quarterlySavings("business"), 162);
+  assert.equal(quarterlySavings("starter"), 0);
 });
 
 test("priceBreakdown adds 21% VAT on the billed period", () => {
   const m = priceBreakdown("pro", "monthly");
-  assert.deepEqual([m.net, m.vat, m.gross], [149, 31.29, 180.29]);
-  const y = priceBreakdown("pro", "yearly");
-  assert.equal(y.months, 12);
-  assert.equal(y.net, 1428);
-  assert.equal(y.gross, 1727.88);
+  assert.deepEqual([m.net, m.vat, m.gross], [119, 24.99, 143.99]);
+  const q = priceBreakdown("pro", "quarterly");
+  assert.equal(q.months, 3);
+  assert.equal(q.net, 315);
+  assert.equal(q.gross, 381.15);
 });
 
 test("starter: 3 XML uploads, the 4th needs an upgrade", () => {
@@ -64,12 +66,12 @@ test("risk alerts only on Business, at the documented thresholds", () => {
   assert.equal(riskAlerts("business", { dscr: 1.5, topClientSharePct: 20, creditNotesSharePct: 1 }).length, 0);
 });
 
-test("ROI vs. consultant: 1 file + 10 hours a year on Pro yearly", () => {
-  // 1 × 1000 EUR × 5 + 10 × 525 RON = 10250 RON consulting; platform 119 × 12 = 1428 RON
+test("ROI vs. consultant: 1 file + 10 hours a year on Pro quarterly", () => {
+  // 1 × 1000 EUR × 5 + 10 × 525 RON = 10250 RON consulting; platform 105 × 12 = 1260 RON
   const r = computeRoi({ filesPerYear: 1, hoursPerYear: 10 });
   assert.equal(r.consultingRon, 10250);
-  assert.equal(r.platformRon, 1428);
-  assert.equal(r.savingsRon, 8822);
-  assert.equal(r.savingsEur, 1764);
+  assert.equal(r.platformRon, 1260);
+  assert.equal(r.savingsRon, 8990);
+  assert.equal(r.savingsEur, 1798);
   assert.equal(computeRoi({ filesPerYear: 0, hoursPerYear: 0 }).savingsRon, 0);
 });

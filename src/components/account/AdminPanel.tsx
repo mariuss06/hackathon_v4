@@ -94,7 +94,7 @@ function QuickView({ row, onClose }: { row: AdminCompanyRow; onClose: () => void
     [tr("Administrator"), row.ceoName || "—"],
     [tr("CNP (mascat)"), row.ceoCnpMasked ?? tr("nedeclarat")],
     [tr("Proprietar"), row.owner === "cont" ? tr("cont utilizator") : tr("mod Guest")],
-    [tr("Plan"), `${PLAN_LABEL[row.plan]}${row.plan === "pro" || row.plan === "business" ? ` · ${row.billingCycle === "yearly" ? tr("anual") : tr("lunar")}` : ""}`],
+    [tr("Plan"), `${PLAN_LABEL[row.plan]}${row.plan === "pro" || row.plan === "business" ? ` · ${row.billingCycle === "quarterly" ? tr("3 luni") : tr("lunar")}` : ""}`],
     [tr("Ultimul scor"), row.lastScore === null ? "—" : `${num(row.lastScore)} / 100${row.lastStatus ? ` · ${row.lastStatus}` : ""}`],
     [tr("Ultima evaluare"), dt(row.lastEvaluation)],
     [tr("Evaluări salvate"), String(row.evaluations)],

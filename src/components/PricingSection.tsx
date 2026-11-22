@@ -12,6 +12,8 @@ import {
   PLAN_TIERS,
   PLANS,
   priceBreakdown,
+  quarterlySavings,
+  QUARTERLY_DISCOUNT_PCT,
   yearlySavings,
   YEARLY_DISCOUNT_PCT,
   type BillingCycle,
@@ -57,7 +59,7 @@ export function BillingToggle({ value, onChange }: { value: BillingCycle; onChan
       {(
         [
           ["monthly", tr("Plată Lunară")],
-          ["yearly", tr("Plată Anuală (Economisești {a}%)", { a: YEARLY_DISCOUNT_PCT })],
+          ["quarterly", tr("Pachet 3 Luni (economisești 12%)")],
         ] as const
       ).map(([v, label]) => (
         <button
@@ -91,7 +93,7 @@ export function PlanCard({
 }) {
   const plan = PLANS[tier];
   const price = plan.price[cycle];
-  const savings = yearlySavings(tier);
+  const savings = quarterlySavings(tier);
   const highlighted = plan.highlighted || featured;
   return (
     <article
@@ -117,7 +119,11 @@ export function PlanCard({
           <span className="text-sm text-muted">{tr("RON / lună")}</span>
         </p>
         <p className="mt-1.5 h-4 text-[11px] text-muted">
-          {price === 0 ? tr("Gratuit, fără card") : cycle === "yearly" ? tr("Facturat anual: {a} · economisești {b}/an", { a: formatRon(price * 12), b: formatRon(savings) }) : tr("sau {a} RON/lună facturat anual", { a: plan.price.yearly })}
+          {price === 0
+            ? tr("Gratuit, fără card")
+            : cycle === "quarterly"
+            ? tr("Facturat la 3 luni: {a} · economisești {b}", { a: formatRon(price * 3), b: formatRon(savings) })
+            : tr("sau {a} RON/lună pachet 3 luni", { a: plan.price.quarterly })}
         </p>
       </div>
 
@@ -199,7 +205,7 @@ export function CheckoutModal({
           </div>
 
           <div className="mt-4 grid grid-cols-2 gap-2">
-            {(["monthly", "yearly"] as const).map((c) => (
+            {(["monthly", "quarterly"] as const).map((c) => (
               <button
                 key={c}
                 type="button"
@@ -209,7 +215,7 @@ export function CheckoutModal({
                   cycle === c ? "border-navy bg-navy text-white" : "border-line bg-white text-ink hover:border-line-strong",
                 )}
               >
-                <span className="block text-xs opacity-70">{c === "monthly" ? "Lunar" : `Anual (−${YEARLY_DISCOUNT_PCT}%)`}</span>
+                <span className="block text-xs opacity-70">{c === "monthly" ? "Lunar" : "Pachet 3 luni (−12%)"}</span>
                 <span className="mt-0.5 block text-sm font-medium">{plan.price[c]} RON {tr("/ lună")}</span>
               </button>
             ))}
@@ -227,7 +233,7 @@ export function CheckoutModal({
               <dd className="text-ink">{b.vat.toLocaleString("ro-RO")} RON</dd>
             </div>
             <div className="flex justify-between border-t border-line pt-2 font-medium text-ink">
-              <dt>Total {cycle === "yearly" ? "anual" : "lunar"} cu TVA</dt>
+              <dt>Total {cycle === "quarterly" ? "3 luni" : "lunar"} cu TVA</dt>
               <dd>{b.gross.toLocaleString("ro-RO")} RON</dd>
             </div>
           </dl>
@@ -341,7 +347,7 @@ function PayPerUseCard({ onChoose }: { onChoose: () => void }) {
 export function PricingSection() {
   useLanguage(); // hydration-safe language for tr()
   const { plan, setPlan } = useAssessment();
-  const [cycle, setCycle] = useState<BillingCycle>("yearly");
+  const [cycle, setCycle] = useState<BillingCycle>("quarterly");
   const [checkout, setCheckout] = useState<PlanTier | null>(null);
   const [ppuOpen, setPpuOpen] = useState(false);
 
@@ -358,8 +364,8 @@ export function PricingSection() {
       <div className="flex flex-col items-center gap-3 text-center">
         <BillingToggle value={cycle} onChange={setCycle} />
         <p className="text-xs text-muted">
-          {cycle === "yearly"
-            ? tr("Economisești {a}/an la Pro și {b}/an la Business.", { a: formatRon(yearlySavings("pro")), b: formatRon(yearlySavings("business")) })
+          {cycle === "quarterly"
+            ? tr("Economisești 42 RON la Pro și 162 RON la Business cu pachetul de 3 luni (ideal pentru planul de 90 de zile).")
             : tr("Prețuri fără TVA. Poți anula oricând.")}
         </p>
       </div>

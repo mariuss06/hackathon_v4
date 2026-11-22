@@ -3,7 +3,7 @@
 import Link from "next/link";
 import { useState } from "react";
 import { ArrowRight, Building2, Check, Layers, ShieldAlert, Sparkles, Users, Zap } from "lucide-react";
-import { formatRon, PLANS, yearlySavings, type BillingCycle } from "@/lib/pricing";
+import { formatRon, PLANS, quarterlySavings, type BillingCycle } from "@/lib/pricing";
 import { useAssessment } from "./AssessmentProvider";
 import { BillingToggle, CheckoutModal, PlanCard } from "./PricingSection";
 import { Card, CardHeader } from "./ui";
@@ -31,7 +31,7 @@ const BUSINESS_EXTRAS = [
 export function BusinessPricingSection() {
   useLanguage(); // hydration-safe language for tr()
   const { plan, setPlan } = useAssessment();
-  const [cycle, setCycle] = useState<BillingCycle>("yearly");
+  const [cycle, setCycle] = useState<BillingCycle>("quarterly");
   const [checkout, setCheckout] = useState(false);
   const business = PLANS.business;
 
@@ -50,7 +50,7 @@ export function BusinessPricingSection() {
       <div className="flex flex-col items-center gap-3 text-center">
         <BillingToggle value={cycle} onChange={setCycle} />
         <p className="text-xs text-muted">
-          {cycle === "yearly" ? tr("Economisești {a}/an la plata anuală.", { a: formatRon(yearlySavings("business")) }) : tr("Prețuri fără TVA. Poți anula oricând.")}
+          {cycle === "quarterly" ? tr("Economisești {a} cu pachetul de 3 luni.", { a: formatRon(quarterlySavings("business")) }) : tr("Prețuri fără TVA. Poți anula oricând.")}
         </p>
       </div>
 

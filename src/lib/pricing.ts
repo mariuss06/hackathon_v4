@@ -8,18 +8,19 @@ import { getNumberLocale } from "./util.ts";
  */
 
 export type PlanTier = "starter" | "pro" | "business";
-export type BillingCycle = "monthly" | "yearly";
+export type BillingCycle = "monthly" | "quarterly";
 export type SubscriptionStatus = "active" | "trialing" | "canceled";
 
 export const PLAN_TIERS: PlanTier[] = ["starter", "pro", "business"];
-export const BILLING_CYCLES: BillingCycle[] = ["monthly", "yearly"];
+export const BILLING_CYCLES: BillingCycle[] = ["monthly", "quarterly"];
 
 const round2 = (n: number) => Math.round(n * 100) / 100;
 
 /** Romanian standard VAT rate (from 1 August 2025). */
 export const VAT_RATE = 0.21;
-/** Discount advertised on the yearly toggle. */
-export const YEARLY_DISCOUNT_PCT = 20;
+/** Discount advertised on the quarterly (3 months) toggle. */
+export const QUARTERLY_DISCOUNT_PCT = 12;
+export const YEARLY_DISCOUNT_PCT = QUARTERLY_DISCOUNT_PCT;
 /** RON per EUR used by the ROI calculator (BNR reference, rounded). */
 export const EUR_RON = 5.0;
 
@@ -59,7 +60,7 @@ export interface PlanDefinition {
   name: string;
   subtitle: string;
   /** RON / month, VAT-exclusive. */
-  price: { monthly: number; yearly: number };
+  price: { monthly: number; quarterly: number };
   highlighted: boolean;
   badge?: string;
   cta: string;
@@ -107,7 +108,7 @@ export const PLANS: Record<PlanTier, PlanDefinition> = {
     tier: "starter",
     name: "Starter",
     subtitle: "Verifică rapid unde te afli înainte să vorbești cu banca.",
-    price: { monthly: 0, yearly: 0 },
+    price: { monthly: 0, quarterly: 0 },
     highlighted: false,
     cta: "Începe Gratuit",
     limits: { maxCompanies: 1, maxXmlUploads: 3, visibleBankRecommendations: 1, visibleActionItems: 2, canSeeAllBanks: false, canExportPdf: false },
@@ -125,7 +126,7 @@ export const PLANS: Record<PlanTier, PlanDefinition> = {
     tier: "pro",
     name: "Pro — Credit Ready",
     subtitle: "Pregătire completă de finanțare, la o fracțiune din costul unui consultant.",
-    price: { monthly: 149, yearly: 119 },
+    price: { monthly: 119, quarterly: 105 },
     highlighted: true,
     badge: "Recomandat IMM",
     cta: "Activează Planul Pro",
@@ -145,7 +146,7 @@ export const PLANS: Record<PlanTier, PlanDefinition> = {
     tier: "business",
     name: "Business & Contabili",
     subtitle: "Pentru firme în creștere, grupuri de firme și cabinete de contabilitate.",
-    price: { monthly: 449, yearly: 359 },
+    price: { monthly: 449, quarterly: 395 },
     highlighted: false,
     cta: "Alege Business",
     limits: { maxCompanies: null, maxXmlUploads: null, visibleBankRecommendations: null, visibleActionItems: null, canSeeAllBanks: true, canExportPdf: true },
@@ -165,7 +166,7 @@ export const PLANS: Record<PlanTier, PlanDefinition> = {
 // Pay-per-use: one complete analysis for ONE company, no subscription
 // ---------------------------------------------------------------------------
 
-/** Billing model of a company: a monthly / yearly plan, or a one-off pay-per-use unlock. */
+/** Billing model of a company: a monthly / quarterly plan, or a one-off pay-per-use unlock. */
 export type BillingModel = PlanTier | "pay-per-use";
 
 export const PAY_PER_USE = {
@@ -173,10 +174,10 @@ export const PAY_PER_USE = {
   name: "Pay-Per-Use",
   subtitle: "Plată per utilizare — o analiză completă pentru o firmă, fără abonament recurent.",
   /** RON, VAT-exclusive, paid once per company. */
-  price: 49,
-  cta: "Deblochează analiza — 49 RON",
+  price: 89,
+  cta: "Deblochează analiza — 89 RON",
   includes: [
-    "Plată unică de 49 RON / analiză completă (fără abonament)",
+    "Plată unică de 89 RON / analiză completă (fără abonament)",
     "Toate cele 5 surse oficiale verificate (ANAF, bilanț, VIES, ONRC, portal.just.ro)",
     "Toate băncile din România (BCR, BT, ING, Raiffeisen, CEC, UniCredit)",
     "Simulator interactiv What-If și Stress Test de sezonalitate",
@@ -306,20 +307,21 @@ export function riskAlerts(tier: PlanTier, m: { dscr: number; topClientSharePct:
 /** Monthly price shown on the card for the chosen billing cycle (RON, VAT-exclusive). */
 export const monthlyPrice = (tier: PlanTier, cycle: BillingCycle) => getPlan(tier).price[cycle];
 
-/** What one invoice costs: a month (monthly) or 12 months up front (yearly). */
+/** What one invoice costs: a month (monthly) or 3 months up front (quarterly). */
 export function priceBreakdown(tier: PlanTier, cycle: BillingCycle) {
   const perMonth = monthlyPrice(tier, cycle);
-  const months = cycle === "yearly" ? 12 : 1;
+  const months = cycle === "quarterly" ? 3 : 1;
   const net = round2(perMonth * months);
   const vat = round2(net * VAT_RATE);
   return { perMonth, months, net, vat, gross: round2(net + vat), vatRate: VAT_RATE, currency: "RON" as const };
 }
 
-/** RON saved per year by paying yearly instead of monthly. */
-export function yearlySavings(tier: PlanTier) {
+/** RON saved per 3-month package by paying quarterly instead of monthly. */
+export function quarterlySavings(tier: PlanTier) {
   const p = getPlan(tier).price;
-  return (p.monthly - p.yearly) * 12;
+  return (p.monthly - p.quarterly) * 3;
 }
+export const yearlySavings = quarterlySavings;
 
 export const formatRon = (n: number) => `${new Intl.NumberFormat("ro-RO", { maximumFractionDigits: 0 }).format(n)} RON`;
 
@@ -337,11 +339,11 @@ export const CONSULTING_BENCHMARK = {
 } as const;
 
 export const ROI_COMPARISON = [
-  { label: "Cost pregătire dosar credit IMM", traditional: "500 – 1.500 EUR (2.500 – 7.500 RON)", creditReady: "149 RON / lună (economie de peste 90%)" },
+  { label: "Cost pregătire dosar credit IMM", traditional: "500 – 1.500 EUR (2.500 – 7.500 RON)", creditReady: "119 RON / lună (economie de peste 90%)" },
   { label: "Timp de diagnostic", traditional: CONSULTING_BENCHMARK.diagnosticTime, creditReady: "Sub 2 minute (instant pe e-Factura)" },
   { label: "Actualizare la facturi noi", traditional: "Taxată separat (250–800 RON/oră)", creditReady: "Recalculare automată în timp real la upload XML" },
   { label: "Potrivire bănci România", traditional: "Subiectivă / limitată", creditReady: "Algoritm obiectiv pe 6 bănci din România" },
-  { label: "O singură analiză, fără abonament", traditional: "Minimum 500 EUR / dosar", creditReady: "Pay-Per-Use: 49 RON / analiză completă" },
+  { label: "O singură analiză, fără abonament", traditional: "Minimum 500 EUR / dosar", creditReady: "Pay-Per-Use: 89 RON / analiză completă" },
 ] as const;
 
 export interface RoiInput {
@@ -357,7 +359,7 @@ export interface RoiInput {
  * Yearly saving vs. a consultant, using the midpoint of the market ranges
  * (1.000 EUR per file, 525 RON per hour). Never negative.
  */
-export function computeRoi({ filesPerYear, hoursPerYear, tier = "pro", cycle = "yearly" }: RoiInput) {
+export function computeRoi({ filesPerYear, hoursPerYear, tier = "pro", cycle = "quarterly" }: RoiInput) {
   const files = Math.max(0, filesPerYear);
   const hours = Math.max(0, hoursPerYear);
   const fileEur = (CONSULTING_BENCHMARK.filePrepEur.min + CONSULTING_BENCHMARK.filePrepEur.max) / 2;

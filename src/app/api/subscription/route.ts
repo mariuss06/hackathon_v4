@@ -21,7 +21,7 @@ export async function GET(request: NextRequest) {
 
 /**
  * POST /api/subscription — simulated checkout ("Confirmă Upgrade — Mod Demo Hackathon"), no card involved.
- * Body: { company, planTier: "starter" | "pro" | "business", billingCycle: "monthly" | "yearly" }.
+ * Body: { company, planTier: "starter" | "pro" | "business", billingCycle: "monthly" | "quarterly" }.
  */
 export async function POST(request: NextRequest) {
   const body = (await request.json().catch(() => null)) as { company?: Company; planTier?: unknown; billingCycle?: unknown } | null;

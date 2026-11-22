@@ -393,7 +393,7 @@ export const ro = {
     demoSave: "Mod Demo: evaluarea se salvează doar în istoricul din browser.",
     apiDown: "API indisponibil.",
     exportUpsell: "Exportul Raportului „Gata de Bancă” (Print/PDF) este inclus în Planul Pro, împreună cu planul complet de 30–90 de zile.",
-    pdfUpsell: "„Fișa Pre-Calificare Bancă” (PDF, 1 pagină A4) este inclusă în Planul Pro și în Pay-Per-Use (49 RON / analiză).",
+    pdfUpsell: "„Fișa Pre-Calificare Bancă” (PDF, 1 pagină A4) este inclusă în Planul Pro și în Pay-Per-Use (89 RON / analiză).",
   },
   portfolio: {
     title: "Dashboard consolidat — portofoliu firme",

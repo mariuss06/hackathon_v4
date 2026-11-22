@@ -72,7 +72,7 @@ export interface Company {
   ceoCnpInfo?: { birthDate: string; sex: "M" | "F" | null; countyCode: string; county: string };
   /** Supabase Auth user that owns the company (null / undefined = guest mode). */
   userId?: string | null;
-  /** One-off pay-per-use analysis bought for this company (49 RON). */
+  /** One-off pay-per-use analysis bought for this company (89 RON). */
   payPerUseUnlocked?: boolean;
 }
 

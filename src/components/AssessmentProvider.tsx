@@ -819,7 +819,7 @@ export function AssessmentProvider({ children }: { children: ReactNode }) {
     [assessment.final.finalScore, company, dataset.invoices, investment, legal, quiz, showToast, updateWorkspace, uploads, verification, plan.planTier, today, payPerUse],
   );
 
-  /** Simulated checkout of one complete analysis (49 RON) for the ACTIVE company. */
+  /** Simulated checkout of one complete analysis (89 RON) for the ACTIVE company. */
   const unlockPayPerUse = useCallback(async () => {
     const target = company;
     if (!target.id) return "Salvează întâi firma în Pasul 1.";
