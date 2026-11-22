@@ -1,0 +1,924 @@
+<title>Credit Ready Business Model</title>
+<meta name="claude:viewport-fit-sides" content="cover">
+<link rel="preconnect" href="https://fonts.googleapis.com">
+<link rel="preconnect" href="https://fonts.gstatic.com" crossorigin>
+<link rel="stylesheet" href="https://fonts.googleapis.com/css2?family=Bricolage+Grotesque:opsz,wght@12..96,500;12..96,700;12..96,800&family=IBM+Plex+Sans:wght@400;500;600&family=IBM+Plex+Mono:wght@400;500&display=swap">
+<style>
+/* Layout: sticky table of contents on the left (desktop), one reading column on the right; sections read like a bank credit file: summary first, detail after. */
+:root {
+  --bg: #f2f5f7;
+  --surface: #ffffff;
+  --sunk: #e8edf1;
+  --ink: #13202a;
+  --muted: #566875;
+  --line: #d8e0e6;
+  --accent: #0d6b66;
+  --accent-soft: #d8eeec;
+  --amber: #b97c0c;
+  --amber-soft: #f6ead2;
+  --good: #2c7a4c;
+  --warn: #b0532a;
+  --warn-soft: #f7e2d8;
+  --seg1: #0d6b66;
+  --seg2: #3f8fc4;
+  --seg3: #b97c0c;
+  --seg4: #8a6bb8;
+  --f-display: "Bricolage Grotesque", "Segoe UI", system-ui, sans-serif;
+  --f-body: "IBM Plex Sans", "Segoe UI", system-ui, sans-serif;
+  --f-mono: "IBM Plex Mono", ui-monospace, Consolas, monospace;
+}
+@media (prefers-color-scheme: dark) {
+  :root:not([data-theme="light"]) {
+    --bg: #0e151b; --surface: #16212a; --sunk: #1c2934; --ink: #e5edf2; --muted: #95a7b4; --line: #263541;
+    --accent: #4fb8af; --accent-soft: #173b3a; --amber: #e2b04c; --amber-soft: #3a2f17; --good: #5cc48a; --warn: #e88a5f; --warn-soft: #3d2419;
+    --seg1: #4fb8af; --seg2: #6fb3e3; --seg3: #e2b04c; --seg4: #b49ae0;
+    color-scheme: dark;
+  }
+}
+:root[data-theme="dark"] {
+  --bg: #0e151b; --surface: #16212a; --sunk: #1c2934; --ink: #e5edf2; --muted: #95a7b4; --line: #263541;
+  --accent: #4fb8af; --accent-soft: #173b3a; --amber: #e2b04c; --amber-soft: #3a2f17; --good: #5cc48a; --warn: #e88a5f; --warn-soft: #3d2419;
+  --seg1: #4fb8af; --seg2: #6fb3e3; --seg3: #e2b04c; --seg4: #b49ae0;
+  color-scheme: dark;
+}
+* { box-sizing: border-box; }
+html { scroll-behavior: smooth; }
+@media (prefers-reduced-motion: reduce) { html { scroll-behavior: auto; } }
+body {
+  background: var(--bg); color: var(--ink);
+  font-family: var(--f-body); font-size: 16px; line-height: 1.6;
+}
+a { color: var(--accent); }
+a:focus-visible, button:focus-visible, summary:focus-visible { outline: 2px solid var(--accent); outline-offset: 2px; border-radius: 4px; }
+.wrap {
+  max-width: 1180px; margin: 0 auto;
+  padding-left: max(16px, env(safe-area-inset-left, 0px));
+  padding-right: max(16px, env(safe-area-inset-right, 0px));
+  padding-block: 32px 64px;
+  display: grid; grid-template-columns: 220px minmax(0, 1fr); gap: 48px;
+}
+nav.toc { position: sticky; top: calc(env(safe-area-inset-top, 0px) + 24px); align-self: start; }
+nav.toc .brand { font-family: var(--f-display); font-weight: 800; font-size: 18px; display: flex; align-items: center; gap: 8px; margin-bottom: 18px; }
+nav.toc .brand .dot { width: 12px; height: 12px; border-radius: 50%; border: 3px solid var(--accent); }
+nav.toc ol { list-style: none; margin: 0; padding: 0; display: grid; gap: 2px; counter-reset: s; }
+nav.toc li a { display: grid; grid-template-columns: 26px 1fr; text-decoration: none; color: var(--muted); font-size: 14px; padding: 5px 8px; border-radius: 6px; }
+nav.toc li a::before { counter-increment: s; content: counter(s, decimal-leading-zero); font-family: var(--f-mono); font-size: 11px; padding-top: 3px; }
+nav.toc li a:hover { background: var(--sunk); color: var(--ink); }
+main { min-width: 0; display: grid; gap: 72px; }
+section { min-width: 0; scroll-margin-top: 24px; }
+.eyebrow { font-family: var(--f-mono); font-size: 12px; letter-spacing: 0.08em; text-transform: uppercase; color: var(--accent); margin: 0 0 8px; }
+h1, h2, h3 { font-family: var(--f-display); text-wrap: balance; line-height: 1.15; margin: 0; }
+h1 { font-size: clamp(34px, 5vw, 54px); font-weight: 800; letter-spacing: -0.02em; }
+h2 { font-size: clamp(26px, 3.2vw, 34px); font-weight: 700; letter-spacing: -0.01em; margin-bottom: 14px; }
+h3 { font-size: 19px; font-weight: 700; margin-bottom: 6px; }
+p { margin: 0 0 12px; max-width: 68ch; }
+.lead { font-size: 19px; color: var(--muted); max-width: 60ch; }
+.muted { color: var(--muted); }
+.small { font-size: 14px; }
+.num { font-family: var(--f-mono); font-variant-numeric: tabular-nums; }
+.stack { display: grid; gap: 16px; }
+
+/* hero */
+.hero { display: grid; grid-template-columns: minmax(0, 1.4fr) minmax(0, 1fr); gap: 32px; align-items: center; }
+.hero .lead { margin-top: 16px; }
+.formula { margin-top: 20px; font-family: var(--f-mono); font-size: 13px; background: var(--sunk); border-radius: 8px; padding: 10px 14px; display: inline-block; max-width: 100%; overflow-x: auto; white-space: nowrap; }
+.gauge { background: var(--surface); border: 1px solid var(--line); border-radius: 16px; padding: 20px; display: grid; gap: 10px; justify-items: center; }
+.gauge svg { width: 100%; max-width: 260px; height: auto; }
+.gauge .cap { font-size: 13px; color: var(--muted); text-align: center; max-width: 30ch; margin: 0; }
+
+.pitch { background: var(--accent-soft); border-radius: 14px; padding: 22px 24px; }
+.pitch p { max-width: none; font-size: 18px; margin: 0; }
+.pitch .eyebrow { margin-bottom: 6px; }
+
+.kpis { display: grid; grid-template-columns: repeat(4, minmax(0, 1fr)); gap: 12px; }
+.kpi { background: var(--surface); border: 1px solid var(--line); border-radius: 12px; padding: 16px; display: grid; gap: 4px; align-content: start; }
+.kpi b { font-family: var(--f-display); font-size: 28px; font-weight: 800; line-height: 1.1; }
+.kpi span { font-size: 13px; color: var(--muted); line-height: 1.4; }
+
+/* tables */
+.tbl { overflow-x: auto; border: 1px solid var(--line); border-radius: 12px; background: var(--surface); }
+table { border-collapse: collapse; width: 100%; font-size: 15px; }
+th, td { text-align: left; vertical-align: top; padding: 11px 14px; border-bottom: 1px solid var(--line); }
+th { font-size: 12px; font-family: var(--f-mono); text-transform: uppercase; letter-spacing: 0.06em; color: var(--muted); font-weight: 500; background: var(--sunk); }
+tr:last-child td { border-bottom: 0; }
+td.r, th.r { text-align: right; font-family: var(--f-mono); font-variant-numeric: tabular-nums; white-space: nowrap; }
+tr.total td { font-weight: 600; background: var(--sunk); }
+
+/* audit */
+.cols3 { display: grid; grid-template-columns: repeat(3, minmax(0, 1fr)); gap: 14px; }
+.cols2 { display: grid; grid-template-columns: repeat(2, minmax(0, 1fr)); gap: 14px; }
+.panel { background: var(--surface); border: 1px solid var(--line); border-radius: 12px; padding: 18px; min-width: 0; }
+.panel ul { margin: 6px 0 0; padding-left: 18px; display: grid; gap: 6px; font-size: 15px; }
+.chip { display: inline-block; font-family: var(--f-mono); font-size: 11px; letter-spacing: 0.06em; text-transform: uppercase; padding: 3px 8px; border-radius: 99px; margin-bottom: 8px; }
+.chip.ok { background: var(--accent-soft); color: var(--good); }
+.chip.demo { background: var(--amber-soft); color: var(--amber); }
+.chip.gap { background: var(--warn-soft); color: var(--warn); }
+
+/* funnel / market bars */
+.bars { display: grid; gap: 14px; }
+.bar-row { display: grid; grid-template-columns: 150px minmax(0, 1fr); gap: 14px; align-items: center; }
+.bar-row .lbl { font-weight: 600; font-size: 15px; line-height: 1.3; }
+.bar-row .lbl small { display: block; font-weight: 400; color: var(--muted); font-size: 13px; }
+.bar-track { background: var(--sunk); border-radius: 6px; height: 34px; position: relative; overflow: hidden; }
+.bar-fill { height: 100%; border-radius: 6px; background: var(--accent); min-width: 6px; }
+.bar-val { position: absolute; left: 10px; top: 50%; transform: translateY(-50%); font-family: var(--f-mono); font-size: 13px; color: var(--ink); white-space: nowrap; }
+.bar-fill.full + .bar-val { color: var(--surface); }
+
+/* segments */
+.seg { display: grid; gap: 14px; }
+.seg-card { background: var(--surface); border: 1px solid var(--line); border-radius: 12px; padding: 18px 20px; display: grid; grid-template-columns: minmax(0, 1fr) minmax(0, 1fr); gap: 18px; }
+.seg-card .who { display: grid; gap: 4px; align-content: start; }
+.seg-card .tag { font-family: var(--f-mono); font-size: 12px; color: var(--accent); }
+.seg-card dl { margin: 0; display: grid; grid-template-columns: 96px minmax(0, 1fr); gap: 6px 12px; font-size: 14px; }
+.seg-card dt { color: var(--muted); }
+.seg-card dd { margin: 0; }
+.quote { font-family: var(--f-display); font-size: 17px; font-weight: 500; border-left: 3px solid var(--amber); padding-left: 12px; margin-top: 8px; }
+
+/* pricing */
+.price-group { display: grid; gap: 12px; }
+.price-group > h3 { margin: 6px 0 0; }
+.prices { display: grid; grid-template-columns: repeat(3, minmax(0, 1fr)); gap: 12px; }
+.price { background: var(--surface); border: 1px solid var(--line); border-radius: 12px; padding: 18px; display: grid; gap: 8px; align-content: start; }
+.price.feature { border: 2px solid var(--accent); }
+.price .name { font-family: var(--f-mono); font-size: 12px; text-transform: uppercase; letter-spacing: 0.08em; color: var(--muted); }
+.price .amt { font-family: var(--f-display); font-size: 30px; font-weight: 800; line-height: 1; }
+.price .amt small { font-size: 14px; font-weight: 500; color: var(--muted); font-family: var(--f-body); }
+.price ul { margin: 4px 0 0; padding-left: 18px; font-size: 14px; display: grid; gap: 4px; }
+.why { background: var(--amber-soft); border-radius: 12px; padding: 16px 18px; font-size: 15px; }
+.why p { max-width: none; margin-bottom: 6px; }
+.why p:last-child { margin: 0; }
+
+/* revenue chart */
+.rev { display: grid; gap: 12px; }
+.rev-row { display: grid; grid-template-columns: 64px minmax(0, 1fr) 96px; gap: 12px; align-items: center; }
+.rev-row .yr { font-family: var(--f-mono); font-size: 14px; }
+.rev-row .tot { font-family: var(--f-mono); font-size: 14px; text-align: right; }
+.stackbar { display: flex; height: 26px; border-radius: 5px; overflow: hidden; background: var(--sunk); }
+.stackbar span { display: block; height: 100%; }
+.legend { display: flex; flex-wrap: wrap; gap: 8px 18px; font-size: 13px; color: var(--muted); }
+.legend i { display: inline-block; width: 10px; height: 10px; border-radius: 2px; margin-right: 6px; vertical-align: -1px; }
+
+/* GTM timeline */
+.phases { display: grid; grid-template-columns: repeat(4, minmax(0, 1fr)); gap: 12px; }
+.phase { background: var(--surface); border: 1px solid var(--line); border-radius: 12px; padding: 16px; min-width: 0; }
+.phase .when { font-family: var(--f-mono); font-size: 12px; color: var(--accent); margin-bottom: 4px; }
+.phase ul { margin: 6px 0 0; padding-left: 18px; font-size: 14px; display: grid; gap: 5px; }
+.phase .goal { margin-top: 10px; font-size: 13px; border-top: 1px dashed var(--line); padding-top: 8px; color: var(--muted); }
+
+/* canvas */
+.canvas { display: grid; grid-template-columns: repeat(5, minmax(0, 1fr)); grid-template-rows: auto auto auto; gap: 8px; }
+.cv { background: var(--surface); border: 1px solid var(--line); border-radius: 10px; padding: 12px 14px; font-size: 13.5px; line-height: 1.45; min-width: 0; }
+.cv h4 { margin: 0 0 6px; font-family: var(--f-mono); font-size: 11px; letter-spacing: 0.07em; text-transform: uppercase; color: var(--accent); font-weight: 500; }
+.cv ul { margin: 0; padding-left: 16px; display: grid; gap: 3px; }
+.cv.kp { grid-column: 1; grid-row: 1 / 3; }
+.cv.ka { grid-column: 2; grid-row: 1; }
+.cv.kr { grid-column: 2; grid-row: 2; }
+.cv.vp { grid-column: 3; grid-row: 1 / 3; background: var(--accent-soft); }
+.cv.cr { grid-column: 4; grid-row: 1; }
+.cv.ch { grid-column: 4; grid-row: 2; }
+.cv.cs { grid-column: 5; grid-row: 1 / 3; }
+.cv.co { grid-column: 1 / 3; grid-row: 3; }
+.cv.rs { grid-column: 3 / 6; grid-row: 3; }
+
+/* risks / faq */
+details { background: var(--surface); border: 1px solid var(--line); border-radius: 10px; padding: 0 16px; }
+details + details { margin-top: 8px; }
+summary { cursor: pointer; padding: 13px 0; font-weight: 600; list-style: none; display: flex; justify-content: space-between; gap: 12px; }
+summary::-webkit-details-marker { display: none; }
+summary::after { content: "+"; font-family: var(--f-mono); color: var(--muted); }
+details[open] summary::after { content: "−"; }
+details > div { padding-bottom: 14px; font-size: 15px; }
+details > div p { max-width: none; }
+.sev { font-family: var(--f-mono); font-size: 11px; padding: 2px 7px; border-radius: 99px; margin-right: 8px; white-space: nowrap; }
+.sev.hi { background: var(--warn-soft); color: var(--warn); }
+.sev.md { background: var(--amber-soft); color: var(--amber); }
+
+.sources ol { padding-left: 20px; font-size: 14px; display: grid; gap: 6px; margin: 0; }
+.sources li { overflow-wrap: anywhere; }
+.note { font-size: 13px; color: var(--muted); }
+
+@media (max-width: 980px) {
+  .wrap { grid-template-columns: minmax(0, 1fr); gap: 28px; }
+  nav.toc { position: static; }
+  nav.toc ol { display: flex; flex-wrap: nowrap; overflow-x: auto; gap: 6px; padding-bottom: 6px; }
+  nav.toc li a { display: block; white-space: nowrap; background: var(--surface); border: 1px solid var(--line); }
+  nav.toc li a::before { content: none; }
+  .hero { grid-template-columns: minmax(0, 1fr); }
+  .kpis { grid-template-columns: repeat(2, minmax(0, 1fr)); }
+  .phases { grid-template-columns: repeat(2, minmax(0, 1fr)); }
+  .canvas { grid-template-columns: repeat(2, minmax(0, 1fr)); grid-template-rows: none; }
+  .canvas .cv { grid-column: auto; grid-row: auto; }
+  .canvas .cv.vp, .canvas .cv.co, .canvas .cv.rs { grid-column: 1 / -1; }
+}
+@media (max-width: 680px) {
+  .cols3, .cols2, .prices, .phases { grid-template-columns: minmax(0, 1fr); }
+  .seg-card { grid-template-columns: minmax(0, 1fr); }
+  .bar-row { grid-template-columns: minmax(0, 1fr); gap: 6px; }
+  .rev-row { grid-template-columns: 48px minmax(0, 1fr); }
+  .rev-row .tot { grid-column: 2; text-align: left; }
+  .canvas { grid-template-columns: minmax(0, 1fr); }
+}
+</style>
+
+<div class="wrap">
+  <nav class="toc" aria-label="Cuprins">
+    <div class="brand"><span class="dot"></span>Credit Ready</div>
+    <ol>
+      <li><a href="#rezumat">Rezumat</a></li>
+      <li><a href="#site">Ce am verificat pe site</a></li>
+      <li><a href="#problema">Problema și de ce acum</a></li>
+      <li><a href="#piata">Piața</a></li>
+      <li><a href="#clienti">Clienții</a></li>
+      <li><a href="#bani">Cum facem bani</a></li>
+      <li><a href="#preturi">Prețuri</a></li>
+      <li><a href="#cifre">Cifre și proiecție</a></li>
+      <li><a href="#concurenta">Concurența</a></li>
+      <li><a href="#promovare">Promovare</a></li>
+      <li><a href="#canvas">Business Model Canvas</a></li>
+      <li><a href="#riscuri">Riscuri</a></li>
+      <li><a href="#juriu">Pitch și întrebări</a></li>
+      <li><a href="#surse">Surse</a></li>
+    </ol>
+  </nav>
+
+  <main>
+    <!-- 1. Rezumat -->
+    <section id="rezumat" class="stack">
+      <div class="hero">
+        <div>
+          <p class="eyebrow">Business model · BCR Challenge 2 · noiembrie 2026</p>
+          <h1>Antrenorul de credit al firmei tale</h1>
+          <p class="lead">Credit Ready citește facturile din e-Factura, îi spune unui IMM în câteva minute dacă banca i-ar da credit, de ce nu, ce să repare în 90 de zile și la ce produs bancar să aplice.</p>
+          <div class="formula">ScorFinal = 0,70·S_Business + 0,15·S_Uman + 0,15·S_Investiție</div>
+        </div>
+        <div class="gauge" aria-label="Exemplu: scorul firmei demo urcă de la 55 la 74 după planul de 90 de zile">
+          <svg viewBox="0 0 220 140" role="img">
+            <title>Scor de la 55 la 74</title>
+            <path d="M20 120 A90 90 0 0 1 200 120" fill="none" stroke="var(--sunk)" stroke-width="16" stroke-linecap="round"/>
+            <path d="M20 120 A90 90 0 0 1 200 120" fill="none" stroke="var(--amber)" stroke-width="16" stroke-linecap="round" pathLength="100" stroke-dasharray="55 100"/>
+            <path d="M20 120 A90 90 0 0 1 200 120" fill="none" stroke="var(--accent)" stroke-width="16" stroke-linecap="round" pathLength="100" stroke-dasharray="19 81" stroke-dashoffset="-55"/>
+            <text x="110" y="104" text-anchor="middle" font-family="Bricolage Grotesque, sans-serif" font-weight="800" font-size="40" fill="var(--ink)">74</text>
+            <text x="110" y="126" text-anchor="middle" font-family="IBM Plex Mono, monospace" font-size="11" fill="var(--muted)">din 100 · după 90 de zile</text>
+            <text x="20" y="138" text-anchor="middle" font-family="IBM Plex Mono, monospace" font-size="10" fill="var(--muted)">0</text>
+            <text x="200" y="138" text-anchor="middle" font-family="IBM Plex Mono, monospace" font-size="10" fill="var(--muted)">100</text>
+          </svg>
+          <p class="cap">Galben: scorul de azi (55,5, „Necesită optimizare”). Verde: punctele câștigate cu planul de 30/60/90 de zile. Peste 60 firma devine „Credit Ready”.</p>
+        </div>
+      </div>
+
+      <div class="pitch">
+        <p class="eyebrow">Modelul într-o frază</p>
+        <p>Verificarea e <b>gratuită pentru firmă</b>. Plătesc cei care câștigă din ea: <b>firma</b> care vrea monitorizare și dosar de credit (abonament Pro), <b>contabilul</b> care vinde un serviciu nou clienților lui (abonament de partener) și <b>banca</b> care primește clienți IMM pregătiți, cu cifre verificate (comision pe dosar și pe credit acordat, sau licență white-label).</p>
+      </div>
+
+      <div class="kpis">
+        <div class="kpi"><b class="num">~536 mii</b><span>IMM-uri în România (micro: ~94,8%)</span></div>
+        <div class="kpi"><b class="num">144,4 mld</b><span>lei, stocul de credite IMM (martie 2026)</span></div>
+        <div class="kpi"><b class="num">~7%</b><span>din firme folosesc creditul bancar ca sursă principală de finanțare</span></div>
+        <div class="kpi"><b class="num">6,1%</b><span>rata creditelor neperformante la IMM-uri, vs. 3,2% la corporații</span></div>
+      </div>
+    </section>
+
+    <!-- 2. Site -->
+    <section id="site" class="stack">
+      <div>
+        <p class="eyebrow">Audit produs</p>
+        <h2>Ce am verificat pe site</h2>
+        <p>Am parcurs cei 4 pași pe aplicația care rulează local (<span class="num">localhost:3001</span>) și am citit codul: motorul de scor, formulele BCR, potrivirea cu băncile, planul de acțiune și verificarea portal.just.ro. Consola browserului nu arată erori.</p>
+      </div>
+      <div class="cols3">
+        <div class="panel">
+          <span class="chip ok">Funcționează</span>
+          <h3>Gata de demo</h3>
+          <ul>
+            <li>Flux în 4 pași: firmă și factor uman, analiză e-Factura, investiție și sector, profil și plan</li>
+            <li>Upload XML UBL 2.1 (inclusiv storno 381) care schimbă scorul instant</li>
+            <li>5 sub-scoruri cu formula afișată, scor final cu kill-switch la quiz</li>
+            <li>Plan 30/60/90 de zile cu puncte potențiale pe fiecare acțiune</li>
+            <li>9 produse de la 6 bănci, cu procent de potrivire și sumă maximă estimată</li>
+            <li>Mai multe firme pe același cont, verificare portal.just.ro live</li>
+          </ul>
+        </div>
+        <div class="panel">
+          <span class="chip demo">Încă demo</span>
+          <h3>Date simulate</h3>
+          <ul>
+            <li>Istoricul e-Factura pe 12 luni e sintetic (firma fictivă Nord Fresh Distribuție SRL)</li>
+            <li>Datele de încasare vin din extrase bancare sintetice</li>
+            <li>Benchmark-ul pe sector folosește un eșantion sintetic (ex. 412 firme la CAEN 4639)</li>
+            <li>Dobânzile sunt orientative și aproape egale la toate băncile (9,5–11%)</li>
+            <li>Fără Supabase, datele stau doar în browser</li>
+            <li>Site-ul extern de quiz nu e conectat (lipsește linkul)</li>
+          </ul>
+        </div>
+        <div class="panel">
+          <span class="chip gap">Lipsește pentru business</span>
+          <h3>Ca să vinzi</h3>
+          <ul>
+            <li>Pagină de prezentare: <span class="num">/</span> duce direct la formular</li>
+            <li>Pagină de prețuri, cont de utilizator și plată</li>
+            <li>Conectare reală la SPV (ANAF) și la extrase bancare (open banking)</li>
+            <li>Ecran de consimțământ GDPR înainte de verificarea juridică</li>
+            <li>Panou pentru contabil (mai mulți clienți) și panou pentru bancă</li>
+            <li>Dosar de credit descărcabil (azi există doar Print)</li>
+          </ul>
+        </div>
+      </div>
+      <div class="why">
+        <p><b>Două lucruri observate în test care contează pentru business.</b></p>
+        <p>1. Verificarea portal.just.ro pe un administrator cu nume comun a întors <b>50 de dosare</b> (inclusiv penale) și scor legal 0, după ce a exclus 936 de omonime parțiale. Portalul nu publică CNP-ul, deci o parte pot fi ale altor persoane cu același nume. <b>Rezolvat pe 21.11:</b> fiecare dosar al administratorului are acum un nivel de încredere (firma în același dosar, județul instanței), iar utilizatorul apasă „E dosarul meu” sau „Nu sunt eu”. Un dosar neconfirmat nu mai poate pune scorul pe 0. Pe același nume, scorul legal a urcat de la 0 la 68.</p>
+        <p>2. Pe pagina de profil am văzut pentru o clipă datele firmei demo înainte să apară firma activă. Pentru un juriu sau un client, e bine ca încărcarea să arate direct firma corectă.</p>
+      </div>
+    </section>
+
+    <!-- 3. Problema -->
+    <section id="problema" class="stack">
+      <div>
+        <p class="eyebrow">Problema</p>
+        <h2>Firmele nu știu cum le vede banca. Băncile pierd timp pe dosare nepregătite.</h2>
+      </div>
+      <div class="cols2">
+        <div class="panel">
+          <h3>Pentru antreprenor</h3>
+          <ul>
+            <li>Nu știe ce indicatori urmărește banca (DSCR, DSO, concentrarea pe clienți).</li>
+            <li>Aplică „pe ghicite”. Un refuz rămâne în istoricul băncii.</li>
+            <li>Nu știe ce să repare și în cât timp.</li>
+            <li>Nu știe ce produs i se potrivește: investiții, linie de credit, factoring sau garanție de stat.</li>
+          </ul>
+        </div>
+        <div class="panel">
+          <h3>Pentru bancă</h3>
+          <ul>
+            <li>Băncile au înăsprit condițiile pentru firme 7 trimestre la rând.</li>
+            <li>Creditele neperformante la firme au urcat la 5,5% (dec. 2025, de la 4,1%).</li>
+            <li>La creditele cu garanție de stat, rata a ajuns la 9,9%.</li>
+            <li>Analiza unui dosar IMM mic costă aproape la fel ca a unuia mare.</li>
+          </ul>
+        </div>
+      </div>
+      <div class="panel">
+        <h3>De ce acum</h3>
+        <div class="tbl" style="border:0">
+          <table>
+            <tbody>
+              <tr><td style="width:180px"><b>Datele există deja</b></td><td>e-Factura e obligatorie B2B din 2024 și B2C din 2025. Practic fiecare firmă are istoricul de vânzări și achiziții în SPV, în format standard. Acum un an aceste date nu existau.</td></tr>
+              <tr><td><b>Băncile vor date mai bune</b></td><td>Neperformanța la IMM crește și standardele se înăspresc. O pre-calificare pe facturi reale reduce riscul și costul de analiză.</td></tr>
+              <tr><td><b>Canalul e deschis</b></td><td>Din aprilie 2026, FNGCIMM lucrează oficial cu brokeri de credite pentru garanțiile de stat. Intermedierea digitală e acceptată.</td></tr>
+              <tr><td><b>Băncile se digitalizează</b></td><td>BCR a mutat clienții firme în George Business, iar 82% din creditele IMM Plus pentru microîntreprinderi au fost aprobate 100% digital în 2024. Un instrument digital de pregătire se integrează natural.</td></tr>
+            </tbody>
+          </table>
+        </div>
+      </div>
+    </section>
+
+    <!-- 4. Piata -->
+    <section id="piata" class="stack">
+      <div>
+        <p class="eyebrow">Studiul pieței</p>
+        <h2>Cât de mare e piața</h2>
+        <p>România are aproximativ 1,07 milioane de firme active cu personalitate juridică. În 2025 s-au înființat peste 100.000 de firme noi și au fost radiate peste 83.000. Dintre IMM-uri, aproape 95% sunt microîntreprinderi.</p>
+      </div>
+      <div class="panel bars" aria-label="Piața în număr de firme">
+        <div class="bar-row">
+          <div class="lbl">TAM<small>toate IMM-urile din e-Factura</small></div>
+          <div class="bar-track"><div class="bar-fill full" style="width:100%"></div><span class="bar-val">~536.000 firme</span></div>
+        </div>
+        <div class="bar-row">
+          <div class="lbl">SAM<small>facturează B2B, CA peste ~1 mil. lei, nevoie de credit în 1–2 ani</small></div>
+          <div class="bar-track"><div class="bar-fill" style="width:22.4%; background:var(--seg2)"></div><span class="bar-val" style="left:calc(22.4% + 10px)">~120.000 firme</span></div>
+        </div>
+        <div class="bar-row">
+          <div class="lbl">SOM, anul 3<small>firme active pe platformă</small></div>
+          <div class="bar-track"><div class="bar-fill" style="width:1.9%; background:var(--amber)"></div><span class="bar-val" style="left:calc(1.9% + 10px)">~10.000 firme (din care ~3.000 plătesc)</span></div>
+        </div>
+        <p class="note" style="margin:4px 0 0">Barele sunt la scară. SAM este estimarea noastră: firmele mici și mijlocii (~5% din IMM-uri, ~27.000) plus microîntreprinderile mai mari, cu CA peste ~1 mil. lei (~90.000). Trebuie validată pe date INS sau ONRC.</p>
+      </div>
+      <div class="cols2">
+        <div class="panel">
+          <h3>Banii din piață</h3>
+          <ul>
+            <li>Stoc credite firme: <b class="num">216,6 mld. lei</b> (martie 2026), din care IMM: <b class="num">144,4 mld. lei</b></li>
+            <li>Creditarea firmelor a crescut cu 3,5% în 2025 (populația: 8,3%)</li>
+            <li>Garanțiile de stat au scăzut de la 27,2 la 11,3 mld. lei: firmele au nevoie de alte variante, nu doar de IMM Invest</li>
+            <li>BEI finanțează bănci și IFN-uri din România pentru IMM-uri și spune că decalajul de finanțare e mai mare decât media UE</li>
+          </ul>
+        </div>
+        <div class="panel">
+          <h3>Comportamentul clienților</h3>
+          <ul>
+            <li>Doar ~7% din firme au creditul bancar ca sursă principală de finanțare: piața e mică azi, dar are loc să crească</li>
+            <li>Sondajul BNR (iunie 2025): ~15% din firme spun că accesul la finanțare e o problemă presantă</li>
+            <li>31% spun că lipsa banilor le blochează digitalizarea</li>
+            <li>Micro-firmele sunt foarte sensibile la preț: Oblio costă 29 €/an și are peste 150.000 de utilizatori</li>
+          </ul>
+        </div>
+      </div>
+      <div class="panel">
+        <h3>Ecosistemul în care intrăm</h3>
+        <div class="tbl" style="border:0">
+          <table>
+            <thead><tr><th>Actor</th><th class="r">Mărime</th><th>Rolul pentru noi</th></tr></thead>
+            <tbody>
+              <tr><td>Contabili și experți contabili (CECCAR)</td><td class="r">40–47 mii</td><td>Cel mai bun canal: au deja acces la SPV pentru clienți și sunt consultați la orice credit.</td></tr>
+              <tr><td>SmartBill (Visma)</td><td class="r">150–170 mii clienți</td><td>Partener de distribuție: buton „Vezi scorul de credit” în aplicația de facturare.</td></tr>
+              <tr><td>Oblio</td><td class="r">~150 mii utilizatori</td><td>Partener de distribuție, public de micro-firme.</td></tr>
+              <tr><td>BCR George pentru firme</td><td class="r">peste 160 mii firme</td><td>Clientul-ancoră: integrare sau white-label.</td></tr>
+              <tr><td>FNGCIMM</td><td class="r">16+ brokeri parteneri</td><td>Garanții de stat pentru firmele cu scor la limită.</td></tr>
+            </tbody>
+          </table>
+        </div>
+      </div>
+    </section>
+
+    <!-- 5. Clienti -->
+    <section id="clienti" class="stack">
+      <div>
+        <p class="eyebrow">Clientela</p>
+        <h2>Cine folosește și cine plătește</h2>
+        <p>Avem patru tipuri de clienți. Firma folosește produsul. Contabilul îl recomandă. Banca primește rezultatul. Fiecare are alt motiv să plătească.</p>
+      </div>
+      <div class="seg">
+        <div class="seg-card">
+          <div class="who">
+            <span class="tag">Segment A · utilizator principal</span>
+            <h3>Patronul unei firme mici sau mijlocii</h3>
+            <p class="small muted" style="margin:0">SRL cu 5–50 de angajați, CA între 1 și 20 mil. lei. Distribuție, HoReCa, producție, transport, construcții, IT. Vrea un credit în următoarele 6–12 luni.</p>
+            <p class="quote">„Vreau să știu dacă îmi dă banca, înainte să mă duc.”</p>
+          </div>
+          <dl>
+            <dt>Problema</dt><dd>Nu știe cum îl vede banca și se teme de refuz.</dd>
+            <dt>Primește</dt><dd>Scor explicat, plan de 90 de zile, produsul potrivit, dosar gata.</dd>
+            <dt>Plătește</dt><dd>Pro, 99 lei/lună, după verificarea gratuită.</dd>
+            <dt>Unde îl găsim</dt><dd>Contabil, banca lui, aplicația de facturare, Google („cum iau credit pentru firmă”).</dd>
+          </dl>
+        </div>
+        <div class="seg-card">
+          <div class="who">
+            <span class="tag">Segment B · volum</span>
+            <h3>Microîntreprinderea</h3>
+            <p class="small muted" style="margin:0">1–9 angajați, CA sub 1 mil. lei. A fost refuzată sau nici n-a încercat. Foarte sensibilă la preț.</p>
+            <p class="quote">„Am nevoie de 50.000 de lei pentru o mașină, dar n-am garanții.”</p>
+          </div>
+          <dl>
+            <dt>Problema</dt><dd>Credit mic, cifre neorganizate, fără garanții imobiliare.</dd>
+            <dt>Primește</dt><dd>Varianta gratuită, microcredit sau garanție FNGCIMM recomandate.</dd>
+            <dt>Plătește</dt><dd>De obicei nimic. Banii vin din comisionul băncii dacă primește credit.</dd>
+            <dt>Unde o găsim</dt><dd>Facebook, TikTok, grupuri de antreprenori, Camere de Comerț.</dd>
+          </dl>
+        </div>
+        <div class="seg-card">
+          <div class="who">
+            <span class="tag">Segment C · canal de vânzare</span>
+            <h3>Contabilul și firma de contabilitate</h3>
+            <p class="small muted" style="margin:0">Administrează 20–150 de firme. Are deja acces la SPV pentru ele. Clienții îl întreabă „pot lua credit?”.</p>
+            <p class="quote">„Vreau un serviciu nou pe care să-l pot factura clienților.”</p>
+          </div>
+          <dl>
+            <dt>Problema</dt><dd>Concurență pe preț, servicii greu de diferențiat.</dd>
+            <dt>Primește</dt><dd>Panou cu toți clienții, rapoarte cu logo propriu, alerte.</dd>
+            <dt>Plătește</dt><dd>Abonament de partener de la 390 lei/lună, primește 25% din comisioanele bancare.</dd>
+            <dt>Unde îl găsim</dt><dd>Filialele CECCAR, webinare cu puncte de pregătire profesională, grupuri de contabili.</dd>
+          </dl>
+        </div>
+        <div class="seg-card">
+          <div class="who">
+            <span class="tag">Segment D · plătitorul mare</span>
+            <h3>Banca (BCR prima), IFN-uri, leasing, factoring</h3>
+            <p class="small muted" style="margin:0">Echipele de creditare IMM și consilierii de relație. Apoi FNGCIMM și finanțatorii nebancari.</p>
+            <p class="quote">„Vreau clienți IMM buni, cu dosarul complet, nu cereri pe care le refuz.”</p>
+          </div>
+          <dl>
+            <dt>Problema</dt><dd>Cost mare de analiză, risc în creștere, refuzuri multe.</dd>
+            <dt>Primește</dt><dd>Clienți pre-calificați, cu consimțământ, cifre din e-Factura și plan de remediere.</dd>
+            <dt>Plătește</dt><dd>Comision pe dosar și pe credit acordat, sau licență white-label.</dd>
+            <dt>Cum ajungem</dt><dd>Pilotul din hackathon, apoi contract cu direcția IMM.</dd>
+          </dl>
+        </div>
+      </div>
+    </section>
+
+    <!-- 6. Cum facem bani -->
+    <section id="bani" class="stack">
+      <div>
+        <p class="eyebrow">Modelul de venituri</p>
+        <h2>Cum facem bani</h2>
+        <p>Patru surse de venit, pornite pe rând. La început contează cel mai mult banca, pentru că aduce volum și credibilitate. Pe termen lung, abonamentele aduc venituri stabile.</p>
+      </div>
+      <div class="tbl">
+        <table>
+          <thead><tr><th>Sursa</th><th>Cine plătește</th><th>Cum</th><th>Când pornește</th></tr></thead>
+          <tbody>
+            <tr><td><b>1. Comision bancar</b></td><td>Bănci, IFN, leasing</td><td>150 lei pe dosar complet trimis (scor ≥ 60, cu consimțământ) + 0,5% din creditul acordat, maximum 5.000 lei</td><td>Pilotul BCR</td></tr>
+            <tr><td><b>2. Abonament Pro</b></td><td>Firma</td><td>99 lei/lună sau 990 lei/an, după verificarea gratuită</td><td>Luna 3</td></tr>
+            <tr><td><b>3. Abonament contabil</b></td><td>Firma de contabilitate</td><td>390–1.490 lei/lună în funcție de numărul de clienți</td><td>Luna 4–6</td></tr>
+            <tr><td><b>4. Licență white-label</b></td><td>Bancă</td><td>Instalare 100–200 mii lei + 25–60 mii lei/lună, cu brandul băncii, doar produsele ei</td><td>Anul 2</td></tr>
+            <tr><td class="muted">Mai târziu</td><td class="muted">FNGCIMM, asociații, presă</td><td class="muted">Rapoarte anonime pe sectoare („Cum plătesc firmele din HoReCa”), potrivire cu fonduri europene</td><td class="muted">Anul 2–3</td></tr>
+          </tbody>
+        </table>
+      </div>
+      <div class="cols2">
+        <div class="panel">
+          <h3>Două ediții ale produsului</h3>
+          <ul>
+            <li><b>Ediția BCR</b> (white-label): doar produsele BCR și garanțiile FNGCIMM. BCR plătește licența. Bună pentru pilot.</li>
+            <li><b>Ediția deschisă</b> (marketplace): toate băncile, clasate după potrivire. Plătește comisionul banca la care se face creditul.</li>
+          </ul>
+        </div>
+        <div class="panel">
+          <h3>Regula de încredere</h3>
+          <p class="small" style="margin:0">Clasamentul băncilor se face doar după potrivire, nu după comision. Afișăm public că primim comision. Dacă firma simte că o împingem spre o bancă, pierdem tot. Încrederea e avantajul nostru principal.</p>
+        </div>
+      </div>
+    </section>
+
+    <!-- 7. Preturi -->
+    <section id="preturi" class="stack">
+      <div>
+        <p class="eyebrow">Prețuri</p>
+        <h2>Lista de prețuri propusă</h2>
+        <p>Prețuri în lei, fără TVA. Sunt ipoteze de lucru: le testăm în primele 3 luni cu 20–30 de interviuri și cu pagini de preț diferite.</p>
+      </div>
+
+      <div class="price-group">
+        <h3>Pentru firme</h3>
+        <div class="prices">
+          <div class="price">
+            <span class="name">Verificare</span>
+            <span class="amt num">0 <small>lei</small></span>
+            <ul>
+              <li>Scorul Credit Ready și eticheta lui</li>
+              <li>Cele 3 lucruri care trag scorul în jos</li>
+              <li>Cea mai potrivită bancă și suma orientativă</li>
+              <li>O firmă, o analiză pe lună</li>
+            </ul>
+          </div>
+          <div class="price feature">
+            <span class="name">Pro · recomandat</span>
+            <span class="amt num">99 <small>lei/lună · 990 lei/an</small></span>
+            <ul>
+              <li>Sincronizare lunară e-Factura, scor actualizat</li>
+              <li>Plan complet 30/60/90 de zile cu remindere</li>
+              <li>Dosar de credit descărcabil pentru bancă</li>
+              <li>Toate produsele bancare și simulări „ce-ar fi dacă”</li>
+              <li>Alerte: client peste 30%, stornări, întârzieri la încasare</li>
+              <li>Verificare juridică lunară</li>
+            </ul>
+          </div>
+          <div class="price">
+            <span class="name">Grup</span>
+            <span class="amt num">249 <small>lei/lună</small></span>
+            <ul>
+              <li>Tot ce are Pro, pentru până la 5 firme</li>
+              <li>Pentru antreprenorii cu mai multe SRL-uri</li>
+              <li>Aplicația are deja mai multe firme pe cont</li>
+            </ul>
+          </div>
+        </div>
+      </div>
+
+      <div class="price-group">
+        <h3>Pentru contabili (partener)</h3>
+        <div class="prices">
+          <div class="price">
+            <span class="name">Partener Start</span>
+            <span class="amt num">390 <small>lei/lună</small></span>
+            <ul><li>Până la 25 de firme client</li><li>Panou cu scorurile tuturor clienților</li><li>25% din comisioanele bancare</li></ul>
+          </div>
+          <div class="price feature">
+            <span class="name">Partener Plus</span>
+            <span class="amt num">790 <small>lei/lună</small></span>
+            <ul><li>Până la 75 de firme client</li><li>Rapoarte cu logo-ul biroului</li><li>25% din comisioanele bancare</li></ul>
+          </div>
+          <div class="price">
+            <span class="name">Birou</span>
+            <span class="amt num">1.490 <small>lei/lună</small></span>
+            <ul><li>Firme nelimitate, mai mulți utilizatori</li><li>Sesiune lunară cu un analist de credit</li><li>30% din comisioanele bancare</li></ul>
+          </div>
+        </div>
+      </div>
+
+      <div class="price-group">
+        <h3>Pentru bănci și finanțatori</h3>
+        <div class="prices">
+          <div class="price">
+            <span class="name">Pe rezultat</span>
+            <span class="amt num">150 <small>lei/dosar</small></span>
+            <ul><li>+0,5% din creditul acordat, maximum 5.000 lei</li><li>Plătesc doar pentru dosare complete, cu consimțământ</li></ul>
+          </div>
+          <div class="price">
+            <span class="name">Pilot</span>
+            <span class="amt num">150 <small>mii lei / 6 luni</small></span>
+            <ul><li>Un județ sau o rețea de sucursale</li><li>Raport de impact: dosare, aprobări, timp de analiză</li></ul>
+          </div>
+          <div class="price">
+            <span class="name">White-label</span>
+            <span class="amt num">25–60 <small>mii lei/lună</small></span>
+            <ul><li>+ instalare 100–200 mii lei</li><li>Brandul băncii, integrare în aplicația ei</li></ul>
+          </div>
+        </div>
+      </div>
+
+      <div class="why">
+        <p><b>De ce aceste prețuri.</b> Capitalise, modelul cel mai apropiat din Marea Britanie, cere £24,95/lună pentru Pro (aproximativ 150 lei) și £95–£395/lună pentru contabili. Noi pornim mai jos, pentru că micro-firmele românești plătesc 29 €/an pentru facturare.</p>
+        <p><b>De ce merită Pro.</b> La un credit de 400.000 lei, o dobândă cu doar 1 punct procentual mai mică înseamnă ~4.000 lei pe an. Abonamentul anual costă 990 lei.</p>
+        <p><b>De ce 0,5% e acceptabil pentru bancă.</b> La un credit mediu de 400.000 lei, comisionul e 2.000 lei. Banca primește un client deja analizat, cu cifre din e-Factura, deci cheltuie mai puțin cu analiza.</p>
+      </div>
+    </section>
+
+    <!-- 8. Cifre -->
+    <section id="cifre" class="stack">
+      <div>
+        <p class="eyebrow">Unit economics și proiecție</p>
+        <h2>Cât aduce un client și cum creștem</h2>
+      </div>
+      <div class="panel">
+        <h3>Ce aduc 100 de firme care fac verificarea gratuită</h3>
+        <div class="tbl" style="border:0">
+          <table>
+            <thead><tr><th>Pas</th><th class="r">Firme</th><th>Ipoteză</th><th class="r">Venit</th></tr></thead>
+            <tbody>
+              <tr><td>Fac verificarea gratuită</td><td class="r">100</td><td>Intră prin contabil, bancă sau Google</td><td class="r">0 lei</td></tr>
+              <tr><td>Trec la Pro</td><td class="r">8</td><td>8% conversie, rămân în medie 14 luni × 99 lei</td><td class="r">11.088 lei</td></tr>
+              <tr><td>Trimit dosarul la bancă</td><td class="r">20</td><td>150 lei pe dosar complet</td><td class="r">3.000 lei</td></tr>
+              <tr><td>Primesc credit</td><td class="r">7</td><td>Credit mediu 400.000 lei × 0,5%</td><td class="r">14.000 lei</td></tr>
+              <tr class="total"><td>Total</td><td class="r"></td><td>≈ 280 lei per firmă care face verificarea</td><td class="r">28.088 lei</td></tr>
+            </tbody>
+          </table>
+        </div>
+        <p class="note" style="margin:10px 0 0">Ținta: costul de a aduce o firmă (CAC) sub 100 lei. Asta se poate prin contabili, bancă și parteneri de facturare, nu prin reclame plătite.</p>
+      </div>
+
+      <div class="panel stack">
+        <h3>Proiecție pe 3 ani (scenariu de bază)</h3>
+        <div class="legend">
+          <span><i style="background:var(--seg1)"></i>Abonamente Pro</span>
+          <span><i style="background:var(--seg2)"></i>Contabili</span>
+          <span><i style="background:var(--seg3)"></i>Comisioane credite</span>
+          <span><i style="background:var(--seg4)"></i>Licențe și pilot bancă</span>
+        </div>
+        <div class="rev" aria-label="Venituri pe ani, la scară față de anul 3">
+          <div class="rev-row"><span class="yr">Anul 1</span>
+            <div class="stackbar"><span style="width:1.63%;background:var(--seg1)"></span><span style="width:1.28%;background:var(--seg2)"></span><span style="width:2.19%;background:var(--seg3)"></span><span style="width:1.37%;background:var(--seg4)"></span></div>
+            <span class="tot">0,71 mil.</span></div>
+          <div class="rev-row"><span class="yr">Anul 2</span>
+            <div class="stackbar"><span style="width:9.78%;background:var(--seg1)"></span><span style="width:9.87%;background:var(--seg2)"></span><span style="width:12.8%;background:var(--seg3)"></span><span style="width:3.66%;background:var(--seg4)"></span></div>
+            <span class="tot">3,95 mil.</span></div>
+          <div class="rev-row"><span class="yr">Anul 3</span>
+            <div class="stackbar"><span style="width:27.15%;background:var(--seg1)"></span><span style="width:27.15%;background:var(--seg2)"></span><span style="width:36.56%;background:var(--seg3)"></span><span style="width:9.14%;background:var(--seg4)"></span></div>
+            <span class="tot">10,94 mil.</span></div>
+        </div>
+        <div class="tbl">
+          <table>
+            <thead><tr><th>lei</th><th class="r">Anul 1</th><th class="r">Anul 2</th><th class="r">Anul 3</th></tr></thead>
+            <tbody>
+              <tr><td>Firme care fac verificarea</td><td class="r">3.000</td><td class="r">15.000</td><td class="r">40.000</td></tr>
+              <tr><td>Abonați Pro (medie în an)</td><td class="r">150</td><td class="r">900</td><td class="r">2.500</td></tr>
+              <tr><td>Contabili parteneri (medie)</td><td class="r">30</td><td class="r">200</td><td class="r">550</td></tr>
+              <tr><td>Credite acordate prin platformă</td><td class="r">120</td><td class="r">700</td><td class="r">2.000</td></tr>
+              <tr><td>Venit Pro</td><td class="r">178.000</td><td class="r">1.070.000</td><td class="r">2.970.000</td></tr>
+              <tr><td>Venit contabili</td><td class="r">140.000</td><td class="r">1.080.000</td><td class="r">2.970.000</td></tr>
+              <tr><td>Comisioane credite (2.000 lei/credit)</td><td class="r">240.000</td><td class="r">1.400.000</td><td class="r">4.000.000</td></tr>
+              <tr><td>Pilot și licențe bancă</td><td class="r">150.000</td><td class="r">400.000</td><td class="r">1.000.000</td></tr>
+              <tr class="total"><td>Venit total</td><td class="r">708.000</td><td class="r">3.950.000</td><td class="r">10.940.000</td></tr>
+              <tr><td>Costuri (echipă, cloud, juridic, marketing)</td><td class="r">1.100.000</td><td class="r">3.200.000</td><td class="r">6.800.000</td></tr>
+              <tr class="total"><td>Rezultat</td><td class="r" style="color:var(--warn)">−392.000</td><td class="r" style="color:var(--good)">+750.000</td><td class="r" style="color:var(--good)">+4.140.000</td></tr>
+            </tbody>
+          </table>
+        </div>
+        <p class="note" style="margin:0">Echipa: 4 oameni în anul 1, 10 în anul 2, 20 în anul 3. Nevoia de finanțare la început: ~150.000 € (pre-seed, premiu de hackathon, pilot plătit de bancă, granturi pentru inovare). Toate cifrele sunt un scenariu ilustrativ, de recalculat după pilot.</p>
+      </div>
+    </section>
+
+    <!-- 9. Concurenta -->
+    <section id="concurenta" class="stack">
+      <div>
+        <p class="eyebrow">Concurența</p>
+        <h2>Cine mai e pe piață</h2>
+        <p>Nimeni din România nu face exact asta: să ia datele din e-Factura ale firmei și să-i spună cum o vede banca și ce să repare. Există însă vecini apropiați.</p>
+      </div>
+      <div class="tbl">
+        <table>
+          <thead><tr><th>Cine</th><th>Ce face</th><th>Diferența față de noi</th><th>Pentru noi e</th></tr></thead>
+          <tbody>
+            <tr><td><b>Termene.ro, RisCo, ListaFirme</b></td><td>Rapoarte despre alte firme, din bilanț și instanțe</td><td>Se uită la bilanțul de anul trecut și verifică partenerii. Nu te pregătesc pentru credit.</td><td>Concurent indirect</td></tr>
+            <tr><td><b>SmartBill (Visma), Oblio, FGO</b></td><td>Facturare și e-Factura</td><td>Au datele, dar nu fac analiză de credit.</td><td>Partener, dar și risc: pot construi asta ei</td></tr>
+            <tr><td><b>Băncile (George Business, BT Go etc.)</b></td><td>Decid și acordă creditul</td><td>Decid, dar nu te ajută să te pregătești și nu compară cu alte bănci.</td><td>Client</td></tr>
+            <tr><td><b>Brokeri de credite</b></td><td>Consultanță umană, acum și cu FNGCIMM</td><td>Scump și lent, nu poate deservi micro-firmele.</td><td>Canal: le dăm instrumentul</td></tr>
+            <tr><td><b>Instant Factoring, PragmaGO, credit.ro, Venevo</b></td><td>Finanțare nebancară</td><td>Dau bani, nu pregătesc firma.</td><td>Produse pe lista noastră</td></tr>
+            <tr><td><b>Capitalise, Swoop (Marea Britanie)</b></td><td>Scor + marketplace de finanțare + contabili</td><td>Nu sunt în România și nu folosesc e-Factura.</td><td>Dovada că modelul merge</td></tr>
+          </tbody>
+        </table>
+      </div>
+      <div class="panel">
+        <h3>De ce câștigăm</h3>
+        <ul>
+          <li><b>Date proaspete:</b> facturile din ultima lună, nu bilanțul de anul trecut.</li>
+          <li><b>Formulă publică:</b> fiecare punct din scor e explicat, cu pragurile băncii.</li>
+          <li><b>Spunem ce să repari:</b> plan pe 30/60/90 de zile cu punctele câștigate la fiecare pas.</li>
+          <li><b>Factorul uman:</b> quiz-ul verifică dacă patronul își știe cifrele, iar portal.just.ro verifică istoricul juridic.</li>
+          <li><b>Cu cât avem mai multe firme, cu atât e mai bun benchmark-ul pe sector.</b> Un concurent nou pornește fără aceste date.</li>
+        </ul>
+      </div>
+    </section>
+
+    <!-- 10. Promovare -->
+    <section id="promovare" class="stack">
+      <div>
+        <p class="eyebrow">Go-to-market</p>
+        <h2>Cum îl promovezi</h2>
+        <p>Regula de bază: nu cumpărăm clienți unul câte unul cu reclame. Mergem acolo unde firmele sunt deja adunate: la bancă, la contabil și în aplicația de facturare.</p>
+      </div>
+
+      <div class="phases">
+        <div class="phase">
+          <div class="when">Acum – luna 1</div>
+          <h3>Pilotul</h3>
+          <ul>
+            <li>Câștigă hackathonul și cere un pilot BCR</li>
+            <li>50 de firme, clienți BCR, aduse de consilierii de relație</li>
+            <li>Măsoară: dosare complete, aprobări, timp de analiză</li>
+          </ul>
+          <p class="goal">Țintă: 50 de firme testate, 1 studiu de caz</p>
+        </div>
+        <div class="phase">
+          <div class="when">Lunile 1–3</div>
+          <h3>Validarea</h3>
+          <ul>
+            <li>20 de interviuri cu patroni, 10 cu contabili</li>
+            <li>Pagină de prezentare + listă de așteptare</li>
+            <li>Calculatoare gratuite: rată credit firmă, DSCR</li>
+            <li>5 contabili în beta, gratuit</li>
+          </ul>
+          <p class="goal">Țintă: 500 pe lista de așteptare, prețuri confirmate</p>
+        </div>
+        <div class="phase">
+          <div class="when">Lunile 3–6</div>
+          <h3>Canalele</h3>
+          <ul>
+            <li>Conectare reală la SPV (ANAF)</li>
+            <li>Programul de parteneri pentru contabili</li>
+            <li>Webinare la filialele CECCAR</li>
+            <li>Discuții cu Oblio și SmartBill pentru buton integrat</li>
+          </ul>
+          <p class="goal">Țintă: 30 de contabili plătitori, 150 Pro</p>
+        </div>
+        <div class="phase">
+          <div class="when">Lunile 6–12</div>
+          <h3>Lansarea</h3>
+          <ul>
+            <li>Lansare națională cu BCR, banner în George Business</li>
+            <li>Parteneriat FNGCIMM, Camerele de Comerț</li>
+            <li>Primul raport public pe sectoare (PR)</li>
+          </ul>
+          <p class="goal">Țintă: 3.000 de firme, 120 de credite acordate</p>
+        </div>
+      </div>
+
+      <div class="tbl">
+        <table>
+          <thead><tr><th>Canal</th><th>Ce faci concret</th><th class="r">Cost</th><th>Ce aduce</th></tr></thead>
+          <tbody>
+            <tr><td><b>BCR (consilieri, George)</b></td><td>Consilierul trimite linkul firmelor care cer credit. Banner „Află dacă ești Credit Ready”.</td><td class="r">mic</td><td>Volum și credibilitate</td></tr>
+            <tr><td><b>Contabili</b></td><td>Webinar CECCAR cu puncte de pregătire, kit de prezentare pentru clienți, 25% din comisioane</td><td class="r">mic</td><td>Cel mai ieftin client, rămâne mult</td></tr>
+            <tr><td><b>Aplicații de facturare</b></td><td>Buton „Vezi scorul de credit” în SmartBill sau Oblio, cu venit împărțit</td><td class="r">mediu</td><td>Acces la 150.000+ firme</td></tr>
+            <tr><td><b>Google / SEO</b></td><td>Calculator „rată credit firmă”, ghiduri despre IMM Invest, FNGCIMM, „de ce ți-a respins banca creditul”</td><td class="r">mic</td><td>Trafic constant, gratuit</td></tr>
+            <tr><td><b>Social media</b></td><td>LinkedIn pentru patroni și contabili. TikTok și Reels: „3 greșeli pentru care banca îți refuză creditul”</td><td class="r">mic</td><td>Notorietate, micro-firme</td></tr>
+            <tr><td><b>Instituții</b></td><td>FNGCIMM, Camerele de Comerț județene, CNIPMMR, incubatoare, programul Start-Up Nation</td><td class="r">mic</td><td>Credibilitate, evenimente</td></tr>
+            <tr><td><b>PR</b></td><td>Câștigul hackathonului, apoi raport trimestrial „Cum plătesc firmele din România” în ZF, Startupcafe, Wall-Street.ro</td><td class="r">mic</td><td>Presă gratuită</td></tr>
+            <tr><td><b>Recomandări</b></td><td>Firma invită o altă firmă sau contabilul ei: o lună Pro gratuită pentru amândoi</td><td class="r">mic</td><td>Creștere organică</td></tr>
+          </tbody>
+        </table>
+      </div>
+
+      <div class="cols3">
+        <div class="panel"><span class="chip ok">Mesaj patron</span><p style="margin:0">„Află în 5 minute dacă îți dă banca credit. Dacă nu, îți spunem exact ce să repari.”</p></div>
+        <div class="panel"><span class="chip ok">Mesaj contabil</span><p style="margin:0">„Un serviciu nou, plătit, pentru clienții tăi: pregătirea pentru credit, din datele pe care le ai deja.”</p></div>
+        <div class="panel"><span class="chip ok">Mesaj bancă</span><p style="margin:0">„Clienți IMM care vin cu dosarul gata și cu cifrele verificate din e-Factura.”</p></div>
+      </div>
+    </section>
+
+    <!-- 11. Canvas -->
+    <section id="canvas" class="stack">
+      <div>
+        <p class="eyebrow">Pe o singură pagină</p>
+        <h2>Business Model Canvas</h2>
+      </div>
+      <div class="canvas">
+        <div class="cv kp"><h4>Parteneri cheie</h4><ul><li>BCR (pilot, apoi licență)</li><li>ANAF / SPV (datele e-Factura)</li><li>Contabili, CECCAR</li><li>SmartBill, Oblio</li><li>FNGCIMM</li><li>Open banking (extrase)</li><li>portal.just.ro</li></ul></div>
+        <div class="cv ka"><h4>Activități cheie</h4><ul><li>Motorul de scor și formulele</li><li>Integrări de date</li><li>Actualizarea produselor bancare</li><li>Parteneriate</li></ul></div>
+        <div class="cv kr"><h4>Resurse cheie</h4><ul><li>Formula BCR explicabilă</li><li>Benchmark pe sectoare</li><li>Încrederea utilizatorilor</li><li>Echipă tech + credit</li></ul></div>
+        <div class="cv vp"><h4>Propunerea de valoare</h4><ul><li><b>Firmă:</b> știi înainte de bancă dacă primești credit, ce să repari și unde să aplici</li><li><b>Contabil:</b> serviciu nou, plătit, fără muncă în plus</li><li><b>Bancă:</b> clienți pre-calificați, cu date verificate și risc mai mic</li></ul></div>
+        <div class="cv cr"><h4>Relația cu clienții</h4><ul><li>Self-service</li><li>Alerte și remindere lunare</li><li>Contabilul ca intermediar</li></ul></div>
+        <div class="cv ch"><h4>Canale</h4><ul><li>Bancă (consilieri, aplicație)</li><li>Contabili</li><li>Aplicații de facturare</li><li>SEO, social media, PR</li></ul></div>
+        <div class="cv cs"><h4>Segmente de clienți</h4><ul><li>IMM-uri mici și mijlocii care vor credit</li><li>Micro-firme</li><li>Firme de contabilitate</li><li>Bănci, IFN, leasing, factoring</li></ul></div>
+        <div class="cv co"><h4>Structura costurilor</h4><ul><li>Echipa (cea mai mare parte)</li><li>Cloud, Supabase, securitate</li><li>Juridic și GDPR</li><li>Marketing pentru canale</li></ul></div>
+        <div class="cv rs"><h4>Surse de venit</h4><ul><li>Comision pe dosar (150 lei) și pe credit acordat (0,5%, max. 5.000 lei)</li><li>Pro 99 lei/lună, Grup 249 lei/lună</li><li>Contabili 390–1.490 lei/lună</li><li>Licență white-label pentru bănci</li></ul></div>
+      </div>
+    </section>
+
+    <!-- 12. Riscuri -->
+    <section id="riscuri" class="stack">
+      <div>
+        <p class="eyebrow">Riscuri</p>
+        <h2>Ce poate merge prost și ce facem</h2>
+      </div>
+      <div>
+        <details open>
+          <summary><span><span class="sev hi">mare</span>Date personale despre dosare penale (GDPR)</span></summary>
+          <div><p>Verificarea portal.just.ro pe administrator poate afișa condamnări penale. GDPR (art. 10) limitează strict prelucrarea acestor date. <b>Ce facem:</b> verificarea pornește doar cu consimțământul explicit al persoanei, nu stocăm dosarele penale, persoana poate contesta orice dosar, iar scorul nu e niciodată o decizie automată de credit (art. 22). Cerem un aviz juridic înainte de lansare.</p></div>
+        </details>
+        <details>
+          <summary><span><span class="sev md">rezolvat</span>Omonimi în verificarea juridică</span></summary>
+          <div><p>În testul nostru, un nume comun a primit 50 de dosare și scor legal 0. <b>Ce am făcut:</b> utilizatorul confirmă care dosare sunt ale lui, județul instanței e folosit ca filtru, iar un dosar neconfirmat nu mai poate pune scorul pe 0. Acum același nume are scor legal 68.</p></div>
+        </details>
+        <details>
+          <summary><span><span class="sev hi">mare</span>Accesul la date reale</span></summary>
+          <div><p>Azi datele sunt sintetice. Pentru produs real trebuie conectare la SPV (ANAF), cu acordul firmei, și la extrase bancare pentru datele de încasare. <b>Ce facem:</b> începem prin contabili, care au deja acces la SPV, și prin import din aplicațiile de facturare. Pentru extrase folosim un furnizor de open banking autorizat.</p></div>
+        </details>
+        <details>
+          <summary><span><span class="sev md">mediu</span>Reglementarea intermedierii de credite</span></summary>
+          <div><p>Comisionul de la bănci ne face intermediar. <b>Ce facem:</b> contract de intermediere cu fiecare bancă, aviz juridic, transparență totală față de firmă. Mesajul rămâne „ghid de pregătire, nu aprobare bancară”, cum scrie deja în aplicație.</p></div>
+        </details>
+        <details>
+          <summary><span><span class="sev md">mediu</span>Conflict de interese</span></summary>
+          <div><p>Dacă o bancă plătește mai mult, firma poate crede că o împingem spre ea. <b>Ce facem:</b> clasăm doar după potrivire, afișăm comisionul, separăm ediția BCR de ediția deschisă.</p></div>
+        </details>
+        <details>
+          <summary><span><span class="sev md">mediu</span>Băncile sau SmartBill construiesc același lucru</span></summary>
+          <div><p><b>Ce facem:</b> ne poziționăm ca furnizor pentru bănci (white-label), nu ca rival. Contractele cu contabilii și datele de benchmark sunt greu de copiat repede.</p></div>
+        </details>
+        <details>
+          <summary><span><span class="sev md">mediu</span>Benchmark-ul pe sector e încă sintetic</span></summary>
+          <div><p><b>Ce facem:</b> îl înlocuim treptat cu date anonime de pe platformă și cu bilanțurile publice de la Ministerul Finanțelor.</p></div>
+        </details>
+        <details>
+          <summary><span><span class="sev md">mediu</span>Micro-firmele nu plătesc</span></summary>
+          <div><p><b>Ce facem:</b> varianta gratuită rămâne bună, iar banii vin de la bănci (comision) și de la contabili, nu din buzunarul micro-firmei.</p></div>
+        </details>
+      </div>
+    </section>
+
+    <!-- 13. Juriu -->
+    <section id="juriu" class="stack">
+      <div>
+        <p class="eyebrow">Pentru prezentare</p>
+        <h2>Pitch de 30 de secunde și întrebările juriului</h2>
+      </div>
+      <div class="pitch">
+        <p>„Jumătate de milion de IMM-uri au acum toate facturile în e-Factura, dar nu știu cum le vede banca. Credit Ready ia aceste facturi și, în câteva minute, îi spune patronului scorul lui, ce trage scorul în jos și ce să facă în 30, 60 și 90 de zile. Apoi îi arată produsul bancar potrivit. Pentru firmă verificarea e gratuită. Banca plătește pentru clienți pregătiți, contabilul pentru un serviciu nou pe care îl vinde, iar firma pentru monitorizare. BCR primește dosare mai bune și risc mai mic.”</p>
+      </div>
+      <div>
+        <details>
+          <summary>De unde aveți datele?</summary>
+          <div><p>Din e-Factura (SPV ANAF), cu acordul firmei, sau prin contabilul ei. În demo, din fișiere XML reale UBL 2.1 și un istoric sintetic pe 12 luni.</p></div>
+        </details>
+        <details>
+          <summary>De ce ar plăti BCR?</summary>
+          <div><p>Pentru că neperformanța la IMM a ajuns la 6,1% și analiza unui dosar mic costă aproape cât a unuia mare. Un client pre-calificat, cu cifrele verificate, scade costul de analiză și numărul de refuzuri. Plătește doar pentru dosare complete și credite acordate.</p></div>
+        </details>
+        <details>
+          <summary>Nu e asta un scoring de credit reglementat?</summary>
+          <div><p>Nu. E un ghid de pregătire. Decizia de credit rămâne la bancă, iar formula noastră e publică.</p></div>
+        </details>
+        <details>
+          <summary>Ce vă oprește pe voi dacă SmartBill face același lucru?</summary>
+          <div><p>Ne concentrăm doar pe credit, comparăm toate băncile, avem planul de remediere și benchmark-ul pe sector. Preferăm să fim partenerii lor, cu butonul nostru în aplicația lor.</p></div>
+        </details>
+        <details>
+          <summary>Cum faceți bani din micro-firme care nu plătesc?</summary>
+          <div><p>Din comisionul băncii când primesc credit (microcredit sau garanție FNGCIMM) și din abonamentul contabilului lor.</p></div>
+        </details>
+        <details>
+          <summary>Care e următorul pas?</summary>
+          <div><p>Un pilot de 6 luni cu BCR, pe 50 de firme, cu trei măsurători: câte dosare sunt complete, câte se aprobă, cât timp scade analiza.</p></div>
+        </details>
+      </div>
+    </section>
+
+    <!-- 14. Surse -->
+    <section id="surse" class="stack sources">
+      <div>
+        <p class="eyebrow">Surse</p>
+        <h2>De unde vin cifrele</h2>
+        <p class="small muted">Cifrele de piață vin din presă și rapoarte publice, căutate pe 21.11.2026. Le recomand verificate în sursa oficială (BNR, INS, ONRC) înainte de prezentarea finală.</p>
+      </div>
+      <ol>
+        <li>Firme active și înființări 2025: <a href="https://startupcafe.ro/radiografia-firmelor-din-romania-peste-1-milion-activeaza-in-prezent-104239" target="_blank" rel="noopener">Startupcafe</a>, <a href="https://www.capital.ro/inmatricularile-de-firme-au-crescut-cu-aproape-23-in-2025-peste-153-000-de-noi-entitati-majoritatea-srl-uri.html" target="_blank" rel="noopener">Capital</a></li>
+        <li>Structura IMM-urilor: <a href="https://www.joi.or.jp/wp-content/uploads/2026/07/20260722_ROU.pdf" target="_blank" rel="noopener">SME Performance Review 2026, Romania</a>, <a href="https://statista.com/statistics/880036/number-of-smes-in-romania" target="_blank" rel="noopener">Statista</a></li>
+        <li>Credite IMM, neperformanță, standarde de creditare: <a href="https://cursdeguvernare.ro/creditarea-corporate-din-romania-a-ajuns-la-2166-mld-lei-companiile-prefera-valuta-creditele-pentru-investitii-cresc-ca-mai-lent-decat-cele-pentru-capital-de-lucru-alarma-privind-neperformanta.html" target="_blank" rel="noopener">Curs de Guvernare</a>, <a href="https://spotmedia.ro/stiri/economie/deteriorare-majora-a-sanatatii-financiare-a-companiilor-ratele-de-neplata-a-creditelor-au-urcat-abrupt-in-2025-cea-mai-mare-crestere-e-la-creditele-garantate-de-stat" target="_blank" rel="noopener">Spotmedia</a>, <a href="https://spotmedia.ro/stiri/economie/bancile-inaspresc-pentru-al-saptelea-trimestru-consecutiv-conditiile-de-creditare-a-companiilor-cele-pentru-populatie-au-fost-relaxate" target="_blank" rel="noopener">Spotmedia (standarde)</a></li>
+        <li>Sondajul BNR privind accesul la finanțare: <a href="https://www.bnr.ro/uploads/2025-6-sondajfcnef_documentpdf_545_1757076419.pdf" target="_blank" rel="noopener">BNR, iunie 2025</a></li>
+        <li>Finanțarea prin bancă (~7%): <a href="https://ro.linkedin.com/in/dana-borota-b744abb2" target="_blank" rel="noopener">sursă care citează OECD</a> (de verificat în raportul OECD)</li>
+        <li>BEI și decalajul de finanțare: <a href="https://www.eib.org/en/press/all/2025-374-romanian-businesses-to-get-financing-support-with-eur25-million-eib-loan-to-patria-bank" target="_blank" rel="noopener">BEI, Patria Bank</a>, <a href="https://www.eib.org/en/press/all/2026-266-romanian-businesses-to-get-extra-financing-as-eib-provides-eur100-million-credit-to-brd-sogelease-ifn" target="_blank" rel="noopener">BEI, BRD Sogelease</a></li>
+        <li>e-Factura obligatorie: <a href="https://ec.europa.eu/digital-building-blocks/sites/spaces/DIGITAL/pages/467108898/eInvoicing+in+Romania" target="_blank" rel="noopener">Comisia Europeană</a>, <a href="https://www.fiscalitatea.ro/sanctiuni-pentru-neconformarea-cu-e-factura-in-b2c-de-la-1-iulie-2025-24221/" target="_blank" rel="noopener">Fiscalitatea</a></li>
+        <li>FNGCIMM și brokerii: <a href="https://www.economica.net/fngcimm-a-semnat-primele-16-protocoale-de-colaborare-cu-brokeri-de-credite_934106.html" target="_blank" rel="noopener">Economica.net</a></li>
+        <li>BCR George pentru firme: <a href="https://www.bvb.ro/infocont/infocont25/BCR26_20250228073423_BCR-Financial-results-2024.pdf" target="_blank" rel="noopener">BCR, rezultate 2024</a>, <a href="https://www.revistabiz.ro/bcr-lanseaza-george-business-platforma-de-banking-inteligent-pentru-imm-uri-si-companii-mari/" target="_blank" rel="noopener">Revista Biz</a></li>
+        <li>SmartBill și Oblio: <a href="https://taxdome.com/ro-ro/blog/oblio-vs-smartbill" target="_blank" rel="noopener">TaxDome</a>, <a href="https://www.wall-street.ro/articol/taxe/ce-ne-invata-e-factura-despre-cum-se-schimba-firmele-din-romania.html" target="_blank" rel="noopener">Wall-Street.ro</a></li>
+        <li>CECCAR: <a href="https://www.capital.ro/congresul-profesiei-contabile-din-romania-viitorul-profesiei-scris-in-limbajul-inteligentei-artificiale.html" target="_blank" rel="noopener">Capital</a></li>
+        <li>Capitalise și Swoop (modele din Marea Britanie): <a href="https://capitalise.com/advisers/features/partner-plans/" target="_blank" rel="noopener">Capitalise, planuri parteneri</a>, <a href="https://swoopfunding.com/advisors" target="_blank" rel="noopener">Swoop pentru consultanți</a></li>
+        <li>Fintech-uri de creditare în România: <a href="https://www.zf.ro/business-hi-tech/planurile-polonezilor-pragmago-piata-locala-dupa-achizitia-22676375" target="_blank" rel="noopener">ZF (PragmaGO)</a>, <a href="https://www.revistabiz.ro/instant-factoring-lider-european-in-factoring-digital-pentru-al-cincilea-an-consecutiv/" target="_blank" rel="noopener">Revista Biz (Instant Factoring)</a>, <a href="https://www.forbes.ro/?p=477440" target="_blank" rel="noopener">Forbes (Venevo)</a></li>
+        <li>Produsul: aplicația Credit Ready (<span class="num">sme-credit-score/</span>), testată pe localhost:3001, și README-ul proiectului.</li>
+      </ol>
+    </section>
+  </main>
+</div>

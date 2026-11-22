@@ -1,0 +1,279 @@
+@import "tailwindcss";
+
+/* Clean corporate fintech palette: very light blue canvas (#F4F7FB), white cards, dark ink, muted accents.
+   Token names (navy/emerald/...) are kept so components stay unchanged; "navy" is now the ink tone. */
+:root {
+  --canvas: #f4f7fb;
+  --card: #ffffff;
+  --line: #e4e9f1;
+  --line-strong: #d3dbe6;
+  --ink: #17201c;
+  --muted: #69736e;
+  --faint: #9ba49f;
+
+  --navy: #18221e;
+  --navy-2: #27322d;
+  --navy-3: #45524b;
+  --navy-soft: #eaeff6;
+
+  --emerald: #4f8a6a;
+  --emerald-strong: #3a6c51;
+  --emerald-soft: #e5efe9;
+
+  --amber: #b4843a;
+  --amber-soft: #f5eee2;
+  --red: #c0605a;
+  --red-soft: #f7ebea;
+  --blue: #5a7e8e;
+  --blue-soft: #e7eff2;
+}
+
+@theme inline {
+  --color-canvas: var(--canvas);
+  --color-card: var(--card);
+  --color-line: var(--line);
+  --color-line-strong: var(--line-strong);
+  --color-ink: var(--ink);
+  --color-muted: var(--muted);
+  --color-faint: var(--faint);
+  --color-navy: var(--navy);
+  --color-navy-2: var(--navy-2);
+  --color-navy-3: var(--navy-3);
+  --color-navy-soft: var(--navy-soft);
+  --color-emerald: var(--emerald);
+  --color-emerald-strong: var(--emerald-strong);
+  --color-emerald-soft: var(--emerald-soft);
+  --color-amber: var(--amber);
+  --color-amber-soft: var(--amber-soft);
+  --color-red: var(--red);
+  --color-red-soft: var(--red-soft);
+  --color-blue: var(--blue);
+  --color-blue-soft: var(--blue-soft);
+  --font-sans: var(--font-geist);
+  --font-mono: var(--font-geist-mono);
+  --shadow-card: 0 1px 2px rgba(23, 32, 28, 0.03), 0 10px 30px -14px rgba(23, 32, 28, 0.12);
+  --shadow-pop: 0 18px 44px -14px rgba(23, 32, 28, 0.32);
+}
+
+html {
+  color-scheme: light;
+}
+
+body {
+  min-height: 100vh;
+  background:
+    radial-gradient(1100px 620px at 8% -12%, #e6eefa 0%, transparent 62%),
+    radial-gradient(900px 560px at 100% 0%, #edf2fa 0%, transparent 58%),
+    var(--canvas);
+  background-attachment: fixed;
+  color: var(--ink);
+  letter-spacing: -0.005em;
+  font-family: var(--font-geist), system-ui, sans-serif;
+  font-feature-settings: "tnum" 1;
+}
+
+::selection {
+  background: var(--emerald-soft);
+  color: var(--emerald-strong);
+}
+
+@layer base {
+  :focus-visible {
+    outline: 2px solid var(--blue);
+    outline-offset: 2px;
+  }
+}
+
+input[type="number"]::-webkit-inner-spin-button,
+input[type="number"]::-webkit-outer-spin-button {
+  -webkit-appearance: none;
+  margin: 0;
+}
+
+input[type="range"] {
+  accent-color: var(--emerald);
+}
+
+@keyframes rise {
+  from {
+    opacity: 0;
+    transform: translateY(8px);
+  }
+  to {
+    opacity: 1;
+    transform: none;
+  }
+}
+.animate-rise {
+  animation: rise 0.35s cubic-bezier(0.2, 0.7, 0.2, 1) both;
+}
+
+@keyframes flash {
+  0% {
+    box-shadow: 0 0 0 0 rgba(14, 159, 110, 0.45);
+  }
+  100% {
+    box-shadow: 0 0 0 14px rgba(14, 159, 110, 0);
+  }
+}
+.animate-flash {
+  animation: flash 0.9s ease-out;
+}
+
+@media print {
+  .no-print {
+    display: none !important;
+  }
+  body {
+    background: #fff;
+  }
+}
+
+@media (prefers-reduced-motion: reduce) {
+  .animate-rise,
+  .animate-flash {
+    animation: none;
+  }
+  * {
+    transition-duration: 0s !important;
+  }
+}
+
+/* ---------------------------------------------------------------------------
+   "Fișă Pre-Calificare Bancă" (components/BankReportPrint.tsx): one A4 page,
+   printed alone when body[data-print="bank"]; hidden on screen.
+   --------------------------------------------------------------------------- */
+#bank-report-sheet {
+  display: none;
+}
+@media print {
+  body[data-print="bank"] {
+    background: #fff !important;
+  }
+  body[data-print="bank"] > *:not(#bank-report-sheet) {
+    display: none !important;
+  }
+  body[data-print="bank"] #bank-report-sheet {
+    display: block;
+    color: #111;
+    font-size: 9.2px;
+    line-height: 1.35;
+    -webkit-print-color-adjust: exact;
+    print-color-adjust: exact;
+  }
+  #bank-report-sheet h3 {
+    margin: 0 0 4px;
+    font-size: 10.5px;
+    font-weight: 600;
+    color: var(--navy);
+    border-bottom: 1px solid #d3dbe6;
+    padding-bottom: 2px;
+  }
+  #bank-report-sheet table {
+    width: 100%;
+    border-collapse: collapse;
+  }
+  #bank-report-sheet th,
+  #bank-report-sheet td {
+    text-align: left;
+    vertical-align: top;
+    padding: 1.5px 0;
+  }
+  #bank-report-sheet th {
+    width: 34%;
+    font-weight: 500;
+    color: #555;
+    padding-right: 6px;
+  }
+  #bank-report-sheet section {
+    break-inside: avoid;
+  }
+  .brs-head {
+    display: flex;
+    justify-content: space-between;
+    align-items: flex-start;
+    border-bottom: 2px solid var(--navy);
+    padding-bottom: 6px;
+  }
+  .brs-right {
+    text-align: right;
+    color: #555;
+  }
+  .brs-title {
+    font-size: 15px;
+    font-weight: 600;
+    color: var(--navy);
+  }
+  .brs-disclaimer {
+    margin: 6px 0 8px;
+    padding: 4px 6px;
+    background: #f4f7fb;
+    border-left: 3px solid var(--amber);
+    font-size: 8.6px;
+    color: #444;
+  }
+  .brs-grid2 {
+    display: grid;
+    grid-template-columns: 1fr 1fr;
+    gap: 10px;
+    margin-bottom: 8px;
+  }
+  .brs-score {
+    display: grid;
+    grid-template-columns: 130px 1fr;
+    gap: 10px;
+    margin-bottom: 8px;
+    padding: 8px;
+    border: 1px solid #d3dbe6;
+    border-radius: 8px;
+  }
+  .brs-big {
+    text-align: center;
+    border-right: 1px solid #e4e9f1;
+    padding-right: 8px;
+  }
+  .brs-num {
+    font-size: 30px;
+    font-weight: 300;
+    line-height: 1.1;
+    color: var(--navy);
+  }
+  .brs-num span {
+    font-size: 12px;
+    color: #888;
+  }
+  .brs-pillars {
+    display: grid;
+    grid-template-columns: repeat(4, 1fr);
+    gap: 6px 10px;
+  }
+  .brs-label {
+    font-size: 8.2px;
+    color: #666;
+  }
+  .brs-mid {
+    font-size: 12px;
+    font-weight: 500;
+  }
+  .brs-bank {
+    margin-bottom: 5px;
+  }
+  #bank-report-sheet ol {
+    margin: 0;
+    padding-left: 14px;
+  }
+  #bank-report-sheet li {
+    margin-bottom: 2px;
+  }
+  .brs-foot {
+    margin-top: 6px;
+    border-top: 1px solid #e4e9f1;
+    padding-top: 4px;
+    font-size: 8px;
+    color: #777;
+  }
+}
+@page {
+  size: A4;
+  margin: 10mm;
+}
